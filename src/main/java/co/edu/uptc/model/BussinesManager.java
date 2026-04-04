@@ -2,17 +2,25 @@ package co.edu.uptc.model;
 
 import java.util.List;
 
+
 import co.edu.uptc.interfaces.ModelInterface;
 import co.edu.uptc.model.entity.Accounting;
 import co.edu.uptc.model.entity.Person;
 import co.edu.uptc.model.entity.Product;
+import co.edu.uptc.model.collectionsByBehaviour.Queue;
+import co.edu.uptc.model.collectionsByBehaviour.Stack;
 
-public class BussinesManager implements ModelInterface{
+public class BussinesManager<T> implements ModelInterface {
 
+    private List<Person> peopleContainer;
+    private List<Product> productsContainer;
+    private List<Accounting> accountingContainer;
+
+    private Queue queueBehaviour;
+    private Stack stackBehaviour;
     @Override
     public void addPerson(Person person) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'addPerson'");
+
     }
 
     @Override
@@ -86,5 +94,5 @@ public class BussinesManager implements ModelInterface{
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'crerateAccountingId'");
     }
-    
+
 }

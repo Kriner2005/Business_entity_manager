@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class DoubleLinkedList<T> {
+import co.edu.uptc.interfaces.IContainer;
+
+public class DoubleLinkedList<T> implements IContainer<T> {
 
     private Node<T> head;
     private Node<T> tail;
@@ -20,9 +22,9 @@ public class DoubleLinkedList<T> {
         }
     }
 
-
-    public void addLast(T data) {
-        Node<T> newNode = new Node<>(data);
+    @Override
+    public void addLast(T element) {
+        Node<T> newNode = new Node<>(element);
         if (isEmpty()) {
             head = tail = newNode;
         } else {
@@ -33,6 +35,7 @@ public class DoubleLinkedList<T> {
         size++;
     }
 
+    @Override
     public void addFirst(T data) {
         Node<T> newNode = new Node<>(data);
         if (isEmpty()) {
@@ -45,20 +48,7 @@ public class DoubleLinkedList<T> {
         size++;
     }
 
-    public T removeFirst() {
-        if (isEmpty())
-            return null;
-        T data = head.data;
-        if (head == tail) {
-            head = tail = null;
-        } else {
-            head = head.next;
-            head.prev = null;
-        }
-        size--;
-        return data;
-    }
-
+    @Override
     public T removeLast() {
         if (isEmpty())
             return null;
@@ -73,24 +63,20 @@ public class DoubleLinkedList<T> {
         return data;
     }
 
-    // En DoubleList.java — agregar este método
-public T removeById(java.util.function.Predicate<T> matcher) {
-    Node<T> current = head;
-    while (current != null) {
-        if (matcher.test(current.data)) {
-            if (current.prev != null) current.prev.next = current.next;
-            else head = current.next;
-
-            if (current.next != null) current.next.prev = current.prev;
-            else tail = current.prev;
-
-            size--;
-            return current.data;
+    @Override
+    public T removeFirst() {
+        if (isEmpty())
+            return null;
+        T data = head.data;
+        if (head == tail) {
+            head = tail = null;
+        } else {
+            head = head.next;
+            head.prev = null;
         }
-        current = current.next;
+        size--;
+        return data;
     }
-    return null;
-}
 
     public T getFirst() {
         return isEmpty() ? null : head.data;
@@ -100,14 +86,35 @@ public T removeById(java.util.function.Predicate<T> matcher) {
         return isEmpty() ? null : tail.data;
     }
 
-    public boolean isEmpty() {
-        return size == 0;
+    @Override
+    public T get(int index) {
+        if (index < 0 || index >= size)
+            return null;
+
+        Node<T> current;
+        if (index < size / 2) {
+            current = head;
+            for (int i = 0; i < index; i++)
+                current = current.next;
+        } else {
+            current = tail;
+            for (int i = size - 1; i > index; i--)
+                current = current.prev;
+        }
+        return current.data;
     }
 
+    @Override
     public int size() {
         return size;
     }
 
+    @Override
+    public boolean isEmpty() {
+        return size == 0;
+    }
+
+    @Override
     public List<T> toList() {
         List<T> result = new ArrayList<>(size);
         Node<T> current = head;
@@ -118,13 +125,4 @@ public T removeById(java.util.function.Predicate<T> matcher) {
         return Collections.unmodifiableList(result);
     }
 
-    public List<T> toListReversed() {
-        List<T> result = new ArrayList<>(size);
-        Node<T> current = tail;
-        while (current != null) {
-            result.add(current.data);
-            current = current.prev;
-        }
-        return Collections.unmodifiableList(result);
-    }
 }

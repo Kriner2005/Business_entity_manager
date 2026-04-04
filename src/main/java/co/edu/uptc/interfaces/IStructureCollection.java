@@ -1,16 +1,16 @@
 package co.edu.uptc.interfaces;
 
-import java.util.ArrayList;
+import java.util.List;
 
-public interface IStructureCollection<T> {
+public interface IStructureCollection<C extends IContainer<E>,E> {
 
-    void add(T element);
+    void add(C container, E element);
 
-    T remove();
+    E remove(C container);
 
-    ArrayList<T> toArrayLsit();
+    List<E> toList(C container);
 
-    int size();
+    int size(C container);
 
-    boolean isEmpty();
+    boolean isEmpty(C container);
 }
