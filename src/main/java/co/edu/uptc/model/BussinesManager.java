@@ -1,9 +1,11 @@
 package co.edu.uptc.model;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
+import co.edu.uptc.enums.MovementType;
 import co.edu.uptc.interfaces.IContainer;
+import co.edu.uptc.interfaces.IFileStorage;
 import co.edu.uptc.interfaces.IStructureCollection;
 import co.edu.uptc.interfaces.ModelInterface;
 import co.edu.uptc.model.entity.Accounting;
@@ -12,24 +14,33 @@ import co.edu.uptc.model.entity.Product;
 
 public class BussinesManager implements ModelInterface {
 
-    private IContainer<Person> personContainer;
-    private IStructureCollection<IContainer<Person>, Person> personBehaviour;
+    private final IContainer<Person> personContainer;
+    private final IStructureCollection<IContainer<Person>, Person> personBehaviour;
 
-    private IContainer<Product> productContainer;
-    private IStructureCollection<IContainer<Product>, Product> productBehaviour;
+    private final IContainer<Product> productContainer;
+    private final IStructureCollection<IContainer<Product>, Product> productBehaviour;
 
-    private List<Accounting> accountingContainer;
+    private final List<Accounting> accountingContainer;
+    private final IFileStorage<Accounting> accountingStorage;
+
+    private int personIdCounter;
+    private int productIdCounter;
 
     public BussinesManager(
             IContainer<Person> personContainer,
             IStructureCollection<IContainer<Person>, Person> personBehaviour,
             IContainer<Product> productContainer,
-            IStructureCollection<IContainer<Product>, Product> productBehaviour) {
+            IStructureCollection<IContainer<Product>, Product> productBehaviour,
+            IFileStorage<Accounting> accountingStorage) {
+
         this.personContainer = personContainer;
         this.personBehaviour = personBehaviour;
+
         this.productContainer = productContainer;
         this.productBehaviour = productBehaviour;
-        this.accountingContainer = new ArrayList<>();
+        this.accountingStorage = accountingStorage;
+
+        this.accountingContainer = accountingStorage.loadAll();
     }
 
     @Override
@@ -49,8 +60,7 @@ public class BussinesManager implements ModelInterface {
 
     @Override
     public int createtPersonId() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'createtPersonId'");
+        return ++personIdCounter;
     }
 
     @Override
@@ -75,24 +85,27 @@ public class BussinesManager implements ModelInterface {
 
     @Override
     public int createProductId() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'createProductId'");
+        return ++productIdCounter;
     }
 
     @Override
     public void addAccounting(Accounting accounting) {
         accountingContainer.add(accounting);
+        accountingStorage.append(accounting);
     }
 
     @Override
     public List<Accounting> getAccountingMovements() {
-        return accountingContainer;
+        return Collections.unmodifiableList(accountingContainer);
     }
 
     @Override
     public double getTotalBalance() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getTotalBalance'");
+        return accountingContainer.stream()
+                .mapToDouble(a -> a.getType() == MovementType.INGRESO
+                        ? a.getAmount()
+                        : -a.getAmount())
+                .sum();
     }
 
 }
