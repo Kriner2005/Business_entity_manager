@@ -1,0 +1,3 @@
+{"description":"Venta","type":"INGRESO","amount":100000.0,"dateTime":"2026-04-04T00:05:27.9062703"}
+{"description":"Compra","type":"EGRESO","amount":40000.0,"dateTime":"2026-04-04T00:05:27.9243004"}
+{"description":"Préstamo","type":"INGRESO","amount":50000.0,"dateTime":"2026-04-04T00:05:27.9252895"}
