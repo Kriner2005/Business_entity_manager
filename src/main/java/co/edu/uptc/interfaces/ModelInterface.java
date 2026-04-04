@@ -22,5 +22,4 @@ public interface ModelInterface {
     void addAccounting(Accounting accounting);
     List<Accounting> getAccountingMovements();
     double getTotalBalance();
-    int crerateAccountingId();
 }

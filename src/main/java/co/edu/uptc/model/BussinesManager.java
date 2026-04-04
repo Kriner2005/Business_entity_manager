@@ -1,43 +1,50 @@
 package co.edu.uptc.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
-
+import co.edu.uptc.interfaces.IContainer;
+import co.edu.uptc.interfaces.IStructureCollection;
 import co.edu.uptc.interfaces.ModelInterface;
 import co.edu.uptc.model.entity.Accounting;
 import co.edu.uptc.model.entity.Person;
 import co.edu.uptc.model.entity.Product;
-import co.edu.uptc.model.collectionsByBehaviour.Queue;
-import co.edu.uptc.model.collectionsByBehaviour.Stack;
 
 public class BussinesManager implements ModelInterface {
 
-    private List<Person> peopleContainer;
-    private List<Product> productsContainer;
+    private IContainer<Person> personContainer;
+    private IStructureCollection<IContainer<Person>, Person> personBehaviour;
+
+    private IContainer<Product> productContainer;
+    private IStructureCollection<IContainer<Product>, Product> productBehaviour;
+
     private List<Accounting> accountingContainer;
 
-    private Queue<Product> queueBehaviour;
-    private Stack<Person> stackBehaviour;
-
-    public BussinesManager() {
-        
+    public BussinesManager(
+            IContainer<Person> personContainer,
+            IStructureCollection<IContainer<Person>, Person> personBehaviour,
+            IContainer<Product> productContainer,
+            IStructureCollection<IContainer<Product>, Product> productBehaviour) {
+        this.personContainer = personContainer;
+        this.personBehaviour = personBehaviour;
+        this.productContainer = productContainer;
+        this.productBehaviour = productBehaviour;
+        this.accountingContainer = new ArrayList<>();
     }
 
     @Override
     public void addPerson(Person person) {
-
+        personBehaviour.add(personContainer, person);
     }
 
     @Override
     public Person removePerson() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'removePerson'");
+        return personBehaviour.remove(personContainer);
     }
 
     @Override
     public List<Person> getPersons() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getPersons'");
+        return personBehaviour.toList(personContainer);
     }
 
     @Override
@@ -48,26 +55,22 @@ public class BussinesManager implements ModelInterface {
 
     @Override
     public void saveCSV() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'saveCSV'");
+
     }
 
     @Override
     public void addProduct(Product product) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'addProduct'");
+        productBehaviour.add(productContainer, product);
     }
 
     @Override
     public Product removeProduct(int id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'removeProduct'");
+        return productBehaviour.remove(productContainer);
     }
 
     @Override
     public List<Product> getProducts() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getProducts'");
+        return productBehaviour.toList(productContainer);
     }
 
     @Override
@@ -78,26 +81,18 @@ public class BussinesManager implements ModelInterface {
 
     @Override
     public void addAccounting(Accounting accounting) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'addAccounting'");
+        accountingContainer.add(accounting);
     }
 
     @Override
     public List<Accounting> getAccountingMovements() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAccountingMovements'");
+        return accountingContainer;
     }
 
     @Override
     public double getTotalBalance() {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getTotalBalance'");
-    }
-
-    @Override
-    public int crerateAccountingId() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'crerateAccountingId'");
     }
 
 }
