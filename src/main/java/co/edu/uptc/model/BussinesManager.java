@@ -10,14 +10,19 @@ import co.edu.uptc.model.entity.Product;
 import co.edu.uptc.model.collectionsByBehaviour.Queue;
 import co.edu.uptc.model.collectionsByBehaviour.Stack;
 
-public class BussinesManager<T> implements ModelInterface {
+public class BussinesManager implements ModelInterface {
 
     private List<Person> peopleContainer;
     private List<Product> productsContainer;
     private List<Accounting> accountingContainer;
 
-    private Queue queueBehaviour;
-    private Stack stackBehaviour;
+    private Queue<Product> queueBehaviour;
+    private Stack<Person> stackBehaviour;
+
+    public BussinesManager() {
+        
+    }
+
     @Override
     public void addPerson(Person person) {
 
