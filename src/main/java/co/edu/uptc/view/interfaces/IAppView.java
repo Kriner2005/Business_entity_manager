@@ -7,5 +7,5 @@ public interface IAppView {
 
     IAccountingView getAccountingView();
 
-    void show();
+    void launch();
 }

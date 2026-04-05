@@ -4,7 +4,6 @@ import java.awt.CardLayout;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 
 import co.edu.uptc.view.interfaces.IAccountingView;
 import co.edu.uptc.view.interfaces.IAppView;
@@ -90,7 +89,7 @@ public class MainFrame extends JFrame implements IAppView {
     }
 
     @Override
-    public void show() {
-        SwingUtilities.invokeLater(() -> setVisible(true));
+    public void launch() {
+        setVisible(true);
     }
 }

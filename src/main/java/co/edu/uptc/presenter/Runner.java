@@ -55,6 +55,6 @@ public class Runner {
 
         // Swing debe correr en su propio hilo — SwingUtilities.invokeLater lo garantiza
 
-        appView.show();
+        appView.launch();
     }
 }
