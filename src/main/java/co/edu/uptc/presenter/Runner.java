@@ -17,31 +17,30 @@ import co.edu.uptc.model.persistence.FileStorageService;
 import co.edu.uptc.model.persistence.serializer.AccountingJsonLSerializer;
 
 public class Runner {
-    PresenterInterface presenter;
+
     ModelInterface model;
     ViewInterface view;
 
-    private void makwMVP() {
+    public void makeMVP() {
 
+        // 1. Model
         IFileStorage<Accounting> accountingStorage = new FileStorageService<>(
-                "data/accounting.txt",
-                new AccountingJsonLSerializer());
+                "data/accounting.txt", new AccountingJsonLSerializer());
 
-        IContainer<Person> personList = new DoubleLinkedList<>();
-        IContainer<Product> productList = new DoubleLinkedList<>();
+        model = new BussinesManager(
+                new DoubleLinkedList<>(), new Queue<>(),
+                new DoubleLinkedList<>(), new Stack<>(),
+                accountingStorage);
 
-        IStructureCollection<IContainer<Person>, Person> personQueue = new Queue<>();
-        IStructureCollection<IContainer<Product>, Product> productStack = new Stack<>();
+        // 2. MainPresenter — recibe el model y lo distribuye internamente
+        MainPresenter mainPresenter = new MainPresenter();
+        mainPresenter.setModel(model);
 
-        model = new BussinesManager(personList, personQueue, productList, productStack, accountingStorage);
-
-        presenter = new MainPresenter();
-        view = null;
-
-        presenter.setModel(model);
-        presenter.setView(view);
-
-        view.setPresenter(presenter);
+        // 3. Conectar cada panel con su subpresenter
+        // MainPresenter ya les dio el model cuando llamamos setModel()
+        frame.getPersonPanel().setPresenter(mainPresenter.getPersonPresenter());
+        frame.getProductPanel().setPresenter(mainPresenter.getProductPresenter());
+        frame.getAccountingPanel().setPresenter(mainPresenter.getAccountingPresenter());
     }
 
     public void run() {

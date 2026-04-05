@@ -3,20 +3,41 @@ package co.edu.uptc.presenter;
 import co.edu.uptc.interfaces.ModelInterface;
 import co.edu.uptc.interfaces.PresenterInterface;
 import co.edu.uptc.interfaces.ViewInterface;
-import co.edu.uptc.view.interfaces.IMediator;
 
-public class MainPresenter implements PresenterInterface{
-    private IMediator mediator;
-    private ViewInterface view;
+public class MainPresenter implements PresenterInterface<ViewInterface<?>> {
     private ModelInterface model;
 
-    @Override
-    public void setView(ViewInterface view) {
-        this.view = view;
-    }
+    // subpresenters
+    private final PersonPresenter personPresenter = new PersonPresenter();
+    private final ProductPresenter productPresenter = new ProductPresenter();
+    private final AccountingPresenter accountingPresenter = new AccountingPresenter();
 
     @Override
     public void setModel(ModelInterface model) {
         this.model = model;
+
+        // distribuye el model a cada subpresenter
+        personPresenter.setModel(model);
+        productPresenter.setModel(model);
+        accountingPresenter.setModel(model);
+    }
+
+    @Override
+    public void setView(ViewInterface<?> view) {
+        // la view principal no hace nada aquí
+        // cada panel se conecta a su propio presenter
+    }
+
+    // getters para que Runner pueda conectar cada panel con su presenter
+    public PersonPresenter getPersonPresenter() {
+        return personPresenter;
+    }
+
+    public ProductPresenter getProductPresenter() {
+        return productPresenter;
+    }
+
+    public AccountingPresenter getAccountingPresenter() {
+        return accountingPresenter;
     }
 }
