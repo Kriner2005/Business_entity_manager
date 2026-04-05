@@ -38,14 +38,19 @@ public class Runner {
         appView = new MainFrame();
     }
 
-    private void wire() {
-        // conecta cada panel con su subpresenter
-        // el panel ya tiene el mediador (lo hace MainFrame internamente)
-        // aquí solo falta el presenter
-        appView.getPersonView().setPresenter(mainPresenter.getPersonPresenter());
-        appView.getProductView().setPresenter(mainPresenter.getProductPresenter());
-        appView.getAccountingView().setPresenter(mainPresenter.getAccountingPresenter());
-    }
+private void wire() {
+    // Personas — bidireccional
+    mainPresenter.getPersonPresenter().setView(appView.getPersonView());
+    appView.getPersonView().setPresenter(mainPresenter.getPersonPresenter());
+
+    // Productos — bidireccional
+    mainPresenter.getProductPresenter().setView(appView.getProductView());
+    appView.getProductView().setPresenter(mainPresenter.getProductPresenter());
+
+    // Contabilidad — bidireccional
+    mainPresenter.getAccountingPresenter().setView(appView.getAccountingView());
+    appView.getAccountingView().setPresenter(mainPresenter.getAccountingPresenter());
+}
 
     public void run() {
         buildModel();
