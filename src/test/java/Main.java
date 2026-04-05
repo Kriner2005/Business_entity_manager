@@ -232,11 +232,11 @@ public class Main {
 
         check("getProducts size == 3", manager.getProducts().size() == 3);
 
-        Product removed = manager.removeProduct(0);
+        Product removed = manager.removeProduct();
         check("removeProduct retorna AZUCAR (LIFO)", "AZUCAR".equals(removed.getDescription()));
         check("getProducts size == 2 tras remove", manager.getProducts().size() == 2);
 
-        Product removed2 = manager.removeProduct(0);
+        Product removed2 = manager.removeProduct();
         check("segundo remove retorna LECHE (LIFO)", "LECHE".equals(removed2.getDescription()));
     }
 
