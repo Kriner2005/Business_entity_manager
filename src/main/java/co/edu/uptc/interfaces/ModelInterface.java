@@ -15,7 +15,7 @@ public interface ModelInterface {
     void saveCSV();
 
     void addProduct(Product product);
-    Product removeProduct(int id);
+    Product removeProduct();
     List<Product> getProducts();
     int createProductId();
     

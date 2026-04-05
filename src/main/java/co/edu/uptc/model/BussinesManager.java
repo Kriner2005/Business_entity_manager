@@ -74,7 +74,7 @@ public class BussinesManager implements ModelInterface {
     }
 
     @Override
-    public Product removeProduct(int id) {
+    public Product removeProduct() {
         return productBehaviour.remove(productContainer);
     }
 
