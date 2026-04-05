@@ -1,7 +1,7 @@
 package co.edu.uptc.interfaces;
 
-public interface ViewInterface {
-    void setPresenter(PresenterInterface<ViewInterface> presenter);
+public interface ViewInterface<P extends PresenterInterface<?>> {
+    void setPresenter(P presenter);
 
     void start();
 

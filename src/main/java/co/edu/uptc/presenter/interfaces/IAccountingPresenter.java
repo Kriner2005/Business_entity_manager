@@ -1,5 +1,8 @@
 package co.edu.uptc.presenter.interfaces;
 
-public interface IAccountingPresenter {
+import co.edu.uptc.interfaces.PresenterInterface;
+import co.edu.uptc.view.interfaces.IAccountingView;
+
+public interface IAccountingPresenter extends PresenterInterface<IAccountingView>{
     
 }

@@ -4,8 +4,9 @@ import java.util.List;
 
 import co.edu.uptc.interfaces.ViewInterface;
 import co.edu.uptc.model.entity.Person;
+import co.edu.uptc.presenter.interfaces.IPersonPresenter;
 
-public interface IPersonView extends ViewInterface {
+public interface IPersonView extends ViewInterface<IPersonPresenter> {
     void showPersonList(List<Person> persons);
 
     void showRemovedPerson(Person person);

@@ -1,5 +1,8 @@
 package co.edu.uptc.presenter.interfaces;
 
-public interface IProductPresenter {
+import co.edu.uptc.interfaces.PresenterInterface;
+import co.edu.uptc.view.interfaces.IProductView;
+
+public interface IProductPresenter extends PresenterInterface<IProductView>{
     
 }

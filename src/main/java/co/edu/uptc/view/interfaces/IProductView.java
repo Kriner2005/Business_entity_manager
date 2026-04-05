@@ -4,8 +4,9 @@ import java.util.List;
 
 import co.edu.uptc.interfaces.ViewInterface;
 import co.edu.uptc.model.entity.Product;
+import co.edu.uptc.presenter.interfaces.IProductPresenter;
 
-public interface IProductView extends ViewInterface {
+public interface IProductView extends ViewInterface<IProductPresenter> {
     void showProductList(List<Product> products);
     void showRemovedProduct(Product product);
 }
