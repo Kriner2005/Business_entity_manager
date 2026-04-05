@@ -4,25 +4,30 @@ import java.awt.CardLayout;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
+import co.edu.uptc.view.interfaces.IAccountingView;
+import co.edu.uptc.view.interfaces.IAppView;
+import co.edu.uptc.view.interfaces.IPersonView;
+import co.edu.uptc.view.interfaces.IProductView;
 import co.edu.uptc.view.mediator.AppMediator;
 import co.edu.uptc.view.panels.AccountingPanel;
 import co.edu.uptc.view.panels.MenuPanel;
 import co.edu.uptc.view.panels.PersonPanel;
 import co.edu.uptc.view.panels.ProductPanel;
 
-public class MainFrame extends JFrame {
+public class MainFrame extends JFrame implements IAppView {
 
     // ── layout ─────────────────────────────────────────────────────────────
     // CardLayout permite tener varios paneles apilados y mostrar uno a la vez
     // Es el mecanismo de "navegación" entre pantallas en Swing
     private final CardLayout cardLayout = new CardLayout();
-    private final JPanel     container  = new JPanel(cardLayout);
+    private final JPanel container = new JPanel(cardLayout);
 
     // ── paneles ────────────────────────────────────────────────────────────
-    private final MenuPanel       menuPanel       = new MenuPanel();
-    private final PersonPanel     personPanel     = new PersonPanel();
-    private final ProductPanel    productPanel    = new ProductPanel();
+    private final MenuPanel menuPanel = new MenuPanel();
+    private final PersonPanel personPanel = new PersonPanel();
+    private final ProductPanel productPanel = new ProductPanel();
     private final AccountingPanel accountingPanel = new AccountingPanel();
 
     // ── mediador ───────────────────────────────────────────────────────────
@@ -49,9 +54,9 @@ public class MainFrame extends JFrame {
     // Registra cada panel en el CardLayout con un nombre clave
     // Ese nombre es el que usa AppMediator para navegar
     private void registerPanels() {
-        container.add(menuPanel,       "menu");
-        container.add(personPanel,     "persons");
-        container.add(productPanel,    "products");
+        container.add(menuPanel, "menu");
+        container.add(personPanel, "persons");
+        container.add(productPanel, "products");
         container.add(accountingPanel, "accounting");
     }
 
@@ -67,5 +72,25 @@ public class MainFrame extends JFrame {
     // El mediador llama este método para cambiar de panel
     public void showPanel(String name) {
         cardLayout.show(container, name);
+    }
+
+    @Override
+    public IPersonView getPersonView() {
+        return personPanel;
+    }
+
+    @Override
+    public IProductView getProductView() {
+        return productPanel;
+    }
+
+    @Override
+    public IAccountingView getAccountingView() {
+        return accountingPanel;
+    }
+
+    @Override
+    public void show() {
+        SwingUtilities.invokeLater(() -> setVisible(true));
     }
 }
