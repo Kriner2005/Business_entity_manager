@@ -8,7 +8,7 @@ import co.edu.uptc.model.collectionsByBehaviour.Queue;
 import co.edu.uptc.model.collectionsByBehaviour.Stack;
 import co.edu.uptc.model.entity.Accounting;
 import co.edu.uptc.model.persistence.FileStorageService;
-import co.edu.uptc.model.persistence.serializer.AccountingJsonLSerializer;
+import co.edu.uptc.model.persistence.serializer.JsonLSerializer;
 import co.edu.uptc.view.MainFrame;
 import co.edu.uptc.view.interfaces.IAppView;
 
@@ -20,7 +20,8 @@ public class Runner {
 
     private void buildModel() {
         IFileStorage<Accounting> accountingStorage = new FileStorageService<>(
-                "data/accounting.txt", new AccountingJsonLSerializer());
+                "data/accounting.txt",
+                new JsonLSerializer<>(Accounting.class));
 
         model = new BussinesManager(
                 new DoubleLinkedList<>(), new Queue<>(),
@@ -38,19 +39,19 @@ public class Runner {
         appView = new MainFrame();
     }
 
-private void wire() {
-    // Personas — bidireccional
-    mainPresenter.getPersonPresenter().setView(appView.getPersonView());
-    appView.getPersonView().setPresenter(mainPresenter.getPersonPresenter());
+    private void wire() {
+        // Personas — bidireccional
+        mainPresenter.getPersonPresenter().setView(appView.getPersonView());
+        appView.getPersonView().setPresenter(mainPresenter.getPersonPresenter());
 
-    // Productos — bidireccional
-    mainPresenter.getProductPresenter().setView(appView.getProductView());
-    appView.getProductView().setPresenter(mainPresenter.getProductPresenter());
+        // Productos — bidireccional
+        mainPresenter.getProductPresenter().setView(appView.getProductView());
+        appView.getProductView().setPresenter(mainPresenter.getProductPresenter());
 
-    // Contabilidad — bidireccional
-    mainPresenter.getAccountingPresenter().setView(appView.getAccountingView());
-    appView.getAccountingView().setPresenter(mainPresenter.getAccountingPresenter());
-}
+        // Contabilidad — bidireccional
+        mainPresenter.getAccountingPresenter().setView(appView.getAccountingView());
+        appView.getAccountingView().setPresenter(mainPresenter.getAccountingPresenter());
+    }
 
     public void run() {
         buildModel();

@@ -7,7 +7,7 @@ import co.edu.uptc.model.collectionsByBehaviour.Queue;
 import co.edu.uptc.model.collectionsByBehaviour.Stack;
 import co.edu.uptc.model.entity.*;
 import co.edu.uptc.model.persistence.FileStorageService;
-import co.edu.uptc.model.persistence.serializer.AccountingJsonLSerializer;
+import co.edu.uptc.model.persistence.serializer.JsonLSerializer;
 import co.edu.uptc.model.validation.*;
 import co.edu.uptc.model.validation.rules.*;
 
@@ -254,7 +254,7 @@ public class Main {
         }
 
         IFileStorage<Accounting> storage = new FileStorageService<>(
-                testFile, new AccountingJsonLSerializer());
+                testFile, new JsonLSerializer());
 
         BussinesManager manager = new BussinesManager(
                 new DoubleLinkedList<>(), new Queue<>(),
@@ -272,7 +272,7 @@ public class Main {
 
         // nueva instancia — simula reinicio de la app
         IFileStorage<Accounting> storage2 = new FileStorageService<>(
-                testFile, new AccountingJsonLSerializer());
+                testFile, new JsonLSerializer());
 
         BussinesManager manager2 = new BussinesManager(
                 new DoubleLinkedList<>(), new Queue<>(),
@@ -293,7 +293,7 @@ public class Main {
 
     private static BussinesManager buildManager() {
         IFileStorage<Accounting> storage = new FileStorageService<>(
-                "data/test_temp.txt", new AccountingJsonLSerializer());
+                "data/test_temp.txt", new JsonLSerializer());
         return new BussinesManager(
                 new DoubleLinkedList<>(), new Queue<>(),
                 new DoubleLinkedList<>(), new Stack<>(),

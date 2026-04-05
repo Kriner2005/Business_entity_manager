@@ -73,7 +73,7 @@ public class AccountingPresenter implements IAccountingPresenter {
 
     @Override
     public void exportFile() {
-        view.showAlert("Exportación — próximamente.");
+        
     }
 
     private double parseAmount(String raw) {

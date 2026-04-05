@@ -10,14 +10,15 @@ import com.google.gson.JsonPrimitive;
 import com.google.gson.JsonSerializer;
 
 import co.edu.uptc.interfaces.ISerializer;
-import co.edu.uptc.model.entity.Accounting;
 
-public class AccountingJsonLSerializer implements ISerializer<Accounting> {
+public class JsonLSerializer<T> implements ISerializer<T> {
 
     private static final DateTimeFormatter FMT = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
     private final Gson gson;
+    private final Class<T> type;
 
-    public AccountingJsonLSerializer() {
+    public JsonLSerializer(Class<T> type) {
+        this.type = type;
         this.gson = new GsonBuilder()
                 .registerTypeAdapter(LocalDateTime.class,
                         (JsonSerializer<LocalDateTime>) (src, t, ctx) -> new JsonPrimitive(src.format(FMT)))
@@ -28,13 +29,12 @@ public class AccountingJsonLSerializer implements ISerializer<Accounting> {
     }
 
     @Override
-    public String serialize(Accounting entity) {
+    public String serialize(T entity) {
         return gson.toJson(entity);
     }
 
     @Override
-    public Accounting deserialize(String line) {
-        return gson.fromJson(line, Accounting.class);
+    public T deserialize(String line) {
+        return gson.fromJson(line, type);
     }
-
 }
