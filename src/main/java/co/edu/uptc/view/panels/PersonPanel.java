@@ -88,12 +88,15 @@ public class PersonPanel extends JPanel implements IPersonView, IColleague {
         dateTxt = new JLabel(MessageManager.msg("person.field.birthdate"));
         genderTxt = new JLabel(MessageManager.msg("person.field.gender"));
         statusLabel = new JLabel(" ");
-        pageLabel = new JLabel("Página 1 de 1", SwingConstants.CENTER);
+        pageLabel = new JLabel(MessageManager.msg("paging.label", 1, 1), SwingConstants.CENTER);
 
         name = new JTextField(15);
         lastName = new JTextField(15);
-        birthDate = new JTextField("yyyy-MM-dd", 10);
-        genderBox = new JComboBox<>(new DefaultComboBoxModel<>(new String[] { "Masculino", "Femenino" }));
+        birthDate = new JTextField(MessageManager.msg("person.birthdate.placeholder"), 10);
+        genderBox = new JComboBox<>(new DefaultComboBoxModel<>(new String[] {
+                MessageManager.msg("person.gender.male"),
+                MessageManager.msg("person.gender.female")
+        }));
 
         add = new JButton(MessageManager.msg("action.add"));
         remove = new JButton(MessageManager.msg("action.remove"));
@@ -145,7 +148,7 @@ public class PersonPanel extends JPanel implements IPersonView, IColleague {
 
     private JPanel buildForm() {
         JPanel form = new JPanel(new GridLayout(2, 4, 8, 8));
-        form.setBorder(BorderFactory.createTitledBorder("Datos"));
+        form.setBorder(BorderFactory.createTitledBorder(MessageManager.msg("person.form.title")));
 
         form.add(nameTxt);
         form.add(name);
@@ -230,7 +233,9 @@ public class PersonPanel extends JPanel implements IPersonView, IColleague {
                     p.getId(),
                     p.getName(),
                     p.getLastName(),
-                    p.getGender() == 'M' ? "Masculino" : "Femenino",
+                    p.getGender() == 'M'
+                            ? MessageManager.msg("person.gender.male")
+                            : MessageManager.msg("person.gender.female"),
                     java.time.LocalDate.now().getYear() - p.getBirthDate().getYear()
             });
         }
@@ -251,7 +256,7 @@ public class PersonPanel extends JPanel implements IPersonView, IColleague {
     public void clearForm() {
         name.setText("");
         lastName.setText("");
-        birthDate.setText("yyyy-MM-dd");
+        birthDate.setText(MessageManager.msg("person.birthdate.placeholder"));
         genderBox.setSelectedIndex(0);
     }
 
@@ -280,7 +285,8 @@ public class PersonPanel extends JPanel implements IPersonView, IColleague {
 
     @Override
     public void showAlert(String msg) {
-        JOptionPane.showMessageDialog(this, msg, "Aviso", JOptionPane.WARNING_MESSAGE);
+        JOptionPane.showMessageDialog(this, msg,
+                MessageManager.msg("dialog.alert.title"), JOptionPane.WARNING_MESSAGE);
     }
 
     // ── IColleague ─────────────────────────────────────────────────────────

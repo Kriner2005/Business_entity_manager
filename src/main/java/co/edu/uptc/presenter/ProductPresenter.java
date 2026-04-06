@@ -27,7 +27,7 @@ public class ProductPresenter implements IProductPresenter {
         AppConfig config = AppConfig.getInstance();
 
         this.validator = new ProductValidator(
-                new NotBlankRule("Description"),
+                new NotBlankRule(MessageManager.msg("validation.description.empty")),
                 new PriceRule(10_000_000));
 
         this.pageSize = config.getPageSize();

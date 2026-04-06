@@ -20,6 +20,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 import co.edu.uptc.config.AppConfig;
+import co.edu.uptc.config.MessageManager;
 import co.edu.uptc.model.entities.Product;
 import co.edu.uptc.presenter.interfaces.IProductPresenter;
 import co.edu.uptc.view.interfaces.IColleague;
@@ -79,12 +80,12 @@ public class ProductPanel extends JPanel implements IProductView, IColleague {
     }
 
     private void initComponents() {
-        title = new JLabel("Gestión de Productos", SwingConstants.CENTER);
-        descriptionTxt = new JLabel("Descripción:");
-        unitTxt = new JLabel("Unidad:");
-        priceTxt = new JLabel("Precio:");
+        title = new JLabel(MessageManager.msg("product.panel.title"), SwingConstants.CENTER);
+        descriptionTxt = new JLabel(MessageManager.msg("product.field.description"));
+        unitTxt = new JLabel(MessageManager.msg("product.field.unit"));
+        priceTxt = new JLabel(MessageManager.msg("product.field.price"));
         statusLabel = new JLabel(" ");
-        pageLabel = new JLabel("Página 1 de 1", SwingConstants.CENTER);
+        pageLabel = new JLabel(MessageManager.msg("paging.label", 1, 1), SwingConstants.CENTER);
 
         description = new JTextField(20);
         unit = new JComboBox<>(new DefaultComboBoxModel<>(new String[] {
@@ -92,17 +93,21 @@ public class ProductPanel extends JPanel implements IProductView, IColleague {
         }));
         price = new JTextField(10);
 
-        add = new JButton("Agregar");
-        remove = new JButton("Retirar");
-        list = new JButton("Listar");
-        export = new JButton("Exportar CSV");
-        back = new JButton("← Volver");
+        add = new JButton(MessageManager.msg("action.add"));
+        remove = new JButton(MessageManager.msg("action.remove"));
+        list = new JButton(MessageManager.msg("action.list"));
+        export = new JButton(MessageManager.msg("action.export"));
+        back = new JButton(MessageManager.msg("action.back"));
 
-        prevBtn = new JButton("◀ Anterior");
-        nextBtn = new JButton("Siguiente ▶");
+        prevBtn = new JButton(MessageManager.msg("action.prev"));
+        nextBtn = new JButton(MessageManager.msg("action.next"));
 
-        tableModel = new DefaultTableModel(
-                new String[] { "ID", "Descripción", "Unidad", "Precio" }, 0) {
+        tableModel = new DefaultTableModel(new String[] {
+                MessageManager.msg("product.table.id"),
+                MessageManager.msg("product.table.description"),
+                MessageManager.msg("product.table.unit"),
+                MessageManager.msg("product.table.price")
+        }, 0) {
             @Override
             public boolean isCellEditable(int r, int c) {
                 return false;
@@ -137,8 +142,8 @@ public class ProductPanel extends JPanel implements IProductView, IColleague {
 
     private JPanel buildForm() {
         JPanel form = new JPanel(new GridLayout(2, 4, 8, 8));
-        form.setBorder(BorderFactory.createTitledBorder("Datos"));
-
+        form.setBorder(BorderFactory.createTitledBorder(
+                MessageManager.msg("product.form.title")));
         form.add(descriptionTxt);
         form.add(description);
         form.add(unitTxt);
@@ -147,7 +152,6 @@ public class ProductPanel extends JPanel implements IProductView, IColleague {
         form.add(price);
         form.add(new JLabel());
         form.add(new JLabel());
-
         return form;
     }
 
@@ -225,7 +229,7 @@ public class ProductPanel extends JPanel implements IProductView, IColleague {
                     String.format("%,.2f", p.getPrice())
             });
         }
-        pageLabel.setText("Página " + currentPage + " de " + totalPages);
+        pageLabel.setText(MessageManager.msg("paging.label", currentPage, totalPages));
         prevBtn.setEnabled(currentPage > 1);
         nextBtn.setEnabled(currentPage < totalPages);
     }
@@ -233,18 +237,19 @@ public class ProductPanel extends JPanel implements IProductView, IColleague {
     @Override
     public void showRemovedProduct(Product product) {
         JOptionPane.showMessageDialog(this,
-                "Producto retirado: " + product.getDescription()
-                        + " | " + product.getUnit()
-                        + " | $" + String.format("%,.2f", product.getPrice()),
-                "Retirado", JOptionPane.INFORMATION_MESSAGE);
+                MessageManager.msg("product.removed.msg",
+                        product.getDescription(), product.getUnit(),
+                        String.format("%,.2f", product.getPrice())),
+                MessageManager.msg("product.removed.title"),
+                JOptionPane.INFORMATION_MESSAGE);
     }
 
     @Override
-public void clearForm() {
-    description.setText("");
-    price.setText("");
-    unit.setSelectedIndex(0);
-}
+    public void clearForm() {
+        description.setText("");
+        price.setText("");
+        unit.setSelectedIndex(0);
+    }
 
     // ── ViewInterface ──────────────────────────────────────────────────────
 
@@ -271,7 +276,8 @@ public void clearForm() {
 
     @Override
     public void showAlert(String msg) {
-        JOptionPane.showMessageDialog(this, msg, "Aviso", JOptionPane.WARNING_MESSAGE);
+        JOptionPane.showMessageDialog(this, msg,
+                MessageManager.msg("dialog.alert.title"), JOptionPane.WARNING_MESSAGE);
     }
 
     // ── IColleague ─────────────────────────────────────────────────────────

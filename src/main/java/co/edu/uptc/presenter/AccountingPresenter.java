@@ -25,7 +25,7 @@ public class AccountingPresenter implements IAccountingPresenter {
     private int currentPage = 0;
 
     public AccountingPresenter() {
-        validator = new AccountingValidator(new NotBlankRule("Description"));
+        validator = new AccountingValidator(new NotBlankRule(MessageManager.msg("validation.description.empty")));
         this.pageSize = AppConfig.getInstance().getPageSize();
     }
 
@@ -66,9 +66,9 @@ public class AccountingPresenter implements IAccountingPresenter {
         }
 
         model.addAccounting(accounting);
-view.showMessage(MessageManager.msg("accounting.add.success"));
+        view.showMessage(MessageManager.msg("accounting.add.success"));
         view.showTotalBalance(model.getTotalBalance());
-        view.clearForm();  
+        view.clearForm();
     }
 
     @Override
@@ -104,7 +104,7 @@ view.showMessage(MessageManager.msg("accounting.add.success"));
     private void showCurrentPage() {
         List<Accounting> all = model.getAccountingMovements();
         int from = currentPage * pageSize;
-        int to   = Math.min(from + pageSize, all.size());
+        int to = Math.min(from + pageSize, all.size());
         List<Accounting> page = all.subList(from, to);
 
         int totalPages = totalPages(all.size());
@@ -113,12 +113,14 @@ view.showMessage(MessageManager.msg("accounting.add.success"));
     }
 
     private int totalPages(int totalElements) {
-        if (totalElements == 0) return 1;
+        if (totalElements == 0)
+            return 1;
         return (int) Math.ceil((double) totalElements / pageSize);
     }
 
     private double parseAmount(String raw) {
-        if (raw == null || raw.isBlank()) return -1.0;
+        if (raw == null || raw.isBlank())
+            return -1.0;
         try {
             return Double.parseDouble(raw.trim().replace(",", "."));
         } catch (NumberFormatException e) {
@@ -127,11 +129,14 @@ view.showMessage(MessageManager.msg("accounting.add.success"));
     }
 
     private MovementType parseMovementType(String raw) {
-        if (raw == null || raw.isBlank()) return null;
-        try {
-            return MovementType.valueOf(raw.trim().toUpperCase());
-        } catch (IllegalArgumentException e) {
+        if (raw == null || raw.isBlank())
             return null;
-        }
+        String incomeLabel = MessageManager.msg("accounting.type.income");
+        String expenseLabel = MessageManager.msg("accounting.type.expense");
+        if (raw.trim().equalsIgnoreCase(incomeLabel))
+            return MovementType.INGRESO;
+        if (raw.trim().equalsIgnoreCase(expenseLabel))
+            return MovementType.EGRESO;
+        return null;
     }
 }

@@ -20,6 +20,8 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 import co.edu.uptc.config.AppConfig;
+import co.edu.uptc.config.MessageManager;
+import co.edu.uptc.enums.MovementType;
 import co.edu.uptc.model.entities.Accounting;
 import co.edu.uptc.presenter.interfaces.IAccountingPresenter;
 import co.edu.uptc.view.interfaces.IAccountingView;
@@ -79,28 +81,36 @@ public class AccountingPanel extends JPanel implements IAccountingView, IColleag
     }
 
     private void initComponents() {
-        title = new JLabel("Gestión de Contabilidad", SwingConstants.CENTER);
-        descriptionTxt = new JLabel("Descripción:");
-        movementTypeTxt = new JLabel("Tipo de movimiento:");
-        valueTxt = new JLabel("Valor:");
-        totalBalanceLabel = new JLabel("Saldo total: $0.00");
+        title = new JLabel(MessageManager.msg("accounting.panel.title"), SwingConstants.CENTER);
+        descriptionTxt = new JLabel(MessageManager.msg("accounting.field.description"));
+        movementTypeTxt = new JLabel(MessageManager.msg("accounting.field.type"));
+        valueTxt = new JLabel(MessageManager.msg("accounting.field.value"));
+        totalBalanceLabel = new JLabel(MessageManager.msg("accounting.balance.label", "0.00"));
         statusLabel = new JLabel(" ");
-        pageLabel = new JLabel("Página 1 de 1", SwingConstants.CENTER);
+        pageLabel = new JLabel(MessageManager.msg("paging.label", 1, 1), SwingConstants.CENTER);
 
         description = new JTextField(20);
-        movementType = new JComboBox<>(new DefaultComboBoxModel<>(new String[] { "INGRESO", "EGRESO" }));
+        movementType = new JComboBox<>(new DefaultComboBoxModel<>(new String[] {
+                MessageManager.msg("accounting.type.income"),
+                MessageManager.msg("accounting.type.expense")
+        }));
+
         value = new JTextField(10);
 
-        add = new JButton("Agregar");
-        list = new JButton("Listar");
-        export = new JButton("Exportar");
-        back = new JButton("← Volver");
+        add = new JButton(MessageManager.msg("action.add"));
+        list = new JButton(MessageManager.msg("action.list"));
+        export = new JButton(MessageManager.msg("action.export.file"));
+        back = new JButton(MessageManager.msg("action.back"));
 
-        prevBtn = new JButton("◀ Anterior");
-        nextBtn = new JButton("Siguiente ▶");
+        prevBtn = new JButton(MessageManager.msg("action.prev"));
+        nextBtn = new JButton(MessageManager.msg("action.next"));
 
-        tableModel = new DefaultTableModel(
-                new String[] { "Descripción", "Tipo", "Valor", "Fecha/Hora" }, 0) {
+        tableModel = new DefaultTableModel(new String[] {
+                MessageManager.msg("accounting.table.description"),
+                MessageManager.msg("accounting.table.type"),
+                MessageManager.msg("accounting.table.value"),
+                MessageManager.msg("accounting.table.datetime")
+        }, 0) {
             @Override
             public boolean isCellEditable(int r, int c) {
                 return false;
@@ -135,7 +145,7 @@ public class AccountingPanel extends JPanel implements IAccountingView, IColleag
 
     private JPanel buildForm() {
         JPanel form = new JPanel(new GridLayout(2, 4, 8, 8));
-        form.setBorder(BorderFactory.createTitledBorder("Datos"));
+        form.setBorder(BorderFactory.createTitledBorder(MessageManager.msg("accounting.form.title")));
 
         form.add(descriptionTxt);
         form.add(description);
@@ -213,21 +223,24 @@ public class AccountingPanel extends JPanel implements IAccountingView, IColleag
     public void showAccountingList(List<Accounting> accountings, int currentPage, int totalPages) {
         tableModel.setRowCount(0);
         for (Accounting a : accountings) {
+            String typeLabel = a.getType() == MovementType.INGRESO
+                    ? MessageManager.msg("accounting.type.income.label")
+                    : MessageManager.msg("accounting.type.expense.label");
             tableModel.addRow(new Object[] {
                     a.getDescription(),
-                    a.getType().getDescripcion(),
+                    typeLabel,
                     String.format("%,.2f", a.getAmount()),
                     a.getDateTime().toString().replace("T", " ").substring(0, 19)
             });
         }
-        pageLabel.setText("Página " + currentPage + " de " + totalPages);
+        pageLabel.setText(MessageManager.msg("paging.label", currentPage, totalPages));
         prevBtn.setEnabled(currentPage > 1);
         nextBtn.setEnabled(currentPage < totalPages);
     }
 
     @Override
     public void showTotalBalance(double total) {
-        totalBalanceLabel.setText(String.format("Saldo total: $%,.2f", total));
+        MessageManager.msg("accounting.balance.label", String.format("%,.2f", total));
         totalBalanceLabel.setForeground(
                 total >= 0 ? new java.awt.Color(0, 128, 0) : java.awt.Color.RED);
     }
@@ -264,7 +277,8 @@ public class AccountingPanel extends JPanel implements IAccountingView, IColleag
 
     @Override
     public void showAlert(String msg) {
-        JOptionPane.showMessageDialog(this, msg, "Aviso", JOptionPane.WARNING_MESSAGE);
+        JOptionPane.showMessageDialog(this, msg,
+                MessageManager.msg("dialog.alert.title"), JOptionPane.WARNING_MESSAGE);
     }
 
     // ── IColleague ─────────────────────────────────────────────────────────
