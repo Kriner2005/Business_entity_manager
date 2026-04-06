@@ -16,8 +16,6 @@ public class Runner {
     private MainPresenter mainPresenter;
 
     private void buildModel() {
-        // AppConfig lee config.properties y ya tiene los 3 storages listos.
-        // Ya no creamos nada hardcodeado aquí.
         AppConfig config = AppConfig.getInstance();
 
         model = new BussinesManager(

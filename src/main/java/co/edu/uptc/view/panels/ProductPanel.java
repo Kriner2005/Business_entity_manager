@@ -31,13 +31,11 @@ public class ProductPanel extends JPanel implements IProductView, IColleague {
 
     private IProductPresenter presenter;
     private IMediator mediator;
-
-    // ── formulario ────────────────────────────────────────────────────────
+    
     private JTextField description;
     private JComboBox<String> unit;
     private JTextField price;
 
-    // ── labels ────────────────────────────────────────────────────────────
     private JLabel title;
     private JLabel descriptionTxt;
     private JLabel unitTxt;
@@ -45,18 +43,15 @@ public class ProductPanel extends JPanel implements IProductView, IColleague {
     private JLabel statusLabel;
     private JLabel pageLabel;
 
-    // ── botones acciones ──────────────────────────────────────────────────
     private JButton add;
     private JButton remove;
     private JButton list;
     private JButton export;
     private JButton back;
 
-    // ── botones paginado ──────────────────────────────────────────────────
     private JButton prevBtn;
     private JButton nextBtn;
 
-    // ── tabla ─────────────────────────────────────────────────────────────
     private JScrollPane scroll;
     private JTable table;
     private DefaultTableModel tableModel;
@@ -117,7 +112,6 @@ public class ProductPanel extends JPanel implements IProductView, IColleague {
         scroll = new JScrollPane(table);
     }
 
-    // Aplica la alineación leída del config a todas las columnas de la tabla
     private void applyTableAlignment() {
         int align = AppConfig.getInstance().getTableAlign();
         DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
@@ -216,8 +210,6 @@ public class ProductPanel extends JPanel implements IProductView, IColleague {
             presenter.exportCSV();
     }
 
-    // ── IProductView ───────────────────────────────────────────────────────
-
     @Override
     public void showProductList(List<Product> products, int currentPage, int totalPages) {
         tableModel.setRowCount(0);
@@ -251,8 +243,6 @@ public class ProductPanel extends JPanel implements IProductView, IColleague {
         unit.setSelectedIndex(0);
     }
 
-    // ── ViewInterface ──────────────────────────────────────────────────────
-
     @Override
     public void setPresenter(IProductPresenter presenter) {
         this.presenter = presenter;
@@ -279,8 +269,6 @@ public class ProductPanel extends JPanel implements IProductView, IColleague {
         JOptionPane.showMessageDialog(this, msg,
                 MessageManager.msg("dialog.alert.title"), JOptionPane.WARNING_MESSAGE);
     }
-
-    // ── IColleague ─────────────────────────────────────────────────────────
 
     @Override
     public void setMediator(IMediator mediator) {

@@ -73,7 +73,7 @@ public class AccountingPresenter implements IAccountingPresenter {
 
     @Override
     public void listAccounting() {
-        currentPage = 0; // al listar siempre empieza desde la primera página
+        currentPage = 0;
         showCurrentPage();
     }
 
@@ -96,10 +96,7 @@ public class AccountingPresenter implements IAccountingPresenter {
 
     @Override
     public void exportFile() {
-        // accounting guarda automáticamente con append — no hay nada que exportar
     }
-
-    // ── helpers ───────────────────────────────────────────────────────────
 
     private void showCurrentPage() {
         List<Accounting> all = model.getAccountingMovements();

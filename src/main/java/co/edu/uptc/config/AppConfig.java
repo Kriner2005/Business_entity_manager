@@ -10,26 +10,12 @@ import co.edu.uptc.model.entities.Person;
 import co.edu.uptc.model.entities.Product;
 import co.edu.uptc.model.entities.Accounting;
 
-/**
- * AppConfig — Singleton que centraliza el acceso a la configuración.
- *
- * Responsabilidades:
- * - Leer claves del ConfigLoader (que ya maneja interno/externo).
- * - Convertir los valores a los tipos correctos (int, String, etc.).
- * - Construir los storages listos para inyectar en BussinesManager.
- *
- * LO QUE NO HACE:
- * - Inventar valores por defecto — eso es responsabilidad del
- * config.properties interno. Si una clave falta, falla con
- * un mensaje claro que indica exactamente qué está mal.
- */
 public class AppConfig {
 
     private static AppConfig instance;
 
     private final ConfigLoader config;
 
-    // ── Storages ───────────────────────────────────────────────────────────
     private IFileStorage<Person> personStorage;
     private IFileStorage<Product> productStorage;
     private IFileStorage<Accounting> accountingStorage;
@@ -45,8 +31,6 @@ public class AppConfig {
         }
         return instance;
     }
-
-    // ── Inicialización de storages ─────────────────────────────────────────
 
     private void initStorage() {
         String basePath = require("data.path");
@@ -64,8 +48,6 @@ public class AppConfig {
                 new JsonLSerializer<>(Accounting.class));
     }
 
-    // ── Getters de storages ────────────────────────────────────────────────
-
     public IFileStorage<Person> getPersonStorage() {
         return personStorage;
     }
@@ -78,13 +60,9 @@ public class AppConfig {
         return accountingStorage;
     }
 
-    // ── Paginado ───────────────────────────────────────────────────────────
-
     public int getPageSize() {
         return parseInt("page.size");
     }
-
-    // ── Alineación de tabla ────────────────────────────────────────────────
 
     public int getTableAlign() {
         return switch (requireUpper("table.align")) {
@@ -95,8 +73,6 @@ public class AppConfig {
                     "Valor inválido para 'table.align'. Valores válidos: LEFT, CENTER, RIGHT");
         };
     }
-
-    // ── Persona ────────────────────────────────────────────────────────────
 
     public int getPersonNameMin() {
         return parseInt("person.name.min");
@@ -114,12 +90,6 @@ public class AppConfig {
         return parseInt("person.lastname.max");
     }
 
-    // ── Producto ───────────────────────────────────────────────────────────
-
-    /**
-     * Estilo de la descripción del producto.
-     * Valores válidos definidos en config.properties: UPPERCASE, TITLECASE
-     */
     public String getProductDescriptionStyle() {
         String style = requireUpper("product.description.style");
         if (!style.equals("UPPERCASE") && !style.equals("TITLECASE")) {
@@ -129,13 +99,6 @@ public class AppConfig {
         return style;
     }
 
-    // ── Helpers de lectura ─────────────────────────────────────────────────
-
-    /**
-     * Lee una clave como String.
-     * Lanza excepción si la clave no existe o está vacía.
-     * El mensaje indica exactamente qué clave falta para facilitar el debug.
-     */
     private String require(String key) {
         String value = config.get(key);
         if (value == null || value.isBlank()) {
@@ -145,12 +108,6 @@ public class AppConfig {
         return value.trim();
     }
 
-    /**
-     * Lee una clave como String y la convierte a mayúsculas.
-     * Útil para claves de tipo enum (LEFT, CENTER, UPPERCASE, etc.)
-     * donde la comparación no debe depender de si el usuario escribió
-     * "left", "LEFT" o "Left" en el archivo de config.
-     */
     private String requireUpper(String key) {
         return require(key).toUpperCase();
     }
@@ -170,6 +127,6 @@ public class AppConfig {
     }
 
     public String getAppLanguage() {
-    return require("app.language");
-}
+        return require("app.language");
+    }
 }

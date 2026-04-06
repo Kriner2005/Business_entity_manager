@@ -28,7 +28,7 @@ public class CsvSerializer<T> implements ISerializer<T> {
             StringWriter sw = new StringWriter();
             StatefulBeanToCsv<T> writer = new StatefulBeanToCsvBuilder<T>(sw)
                     .withSeparator(';')
-                    .withQuotechar(ICSVWriter.NO_QUOTE_CHARACTER) // sin comillas
+                    .withQuotechar(ICSVWriter.NO_QUOTE_CHARACTER) 
                     .build();
             writer.write(entity);
             return sw.toString().trim();
@@ -44,7 +44,7 @@ public class CsvSerializer<T> implements ISerializer<T> {
                     .withCSVParser(
                         new CSVParserBuilder()
                             .withSeparator(';')
-                            .withQuoteChar(ICSVWriter.NO_QUOTE_CHARACTER) // sin comillas
+                            .withQuoteChar(ICSVWriter.NO_QUOTE_CHARACTER)
                             .build()
                     )
                     .build();

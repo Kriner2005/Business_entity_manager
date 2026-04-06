@@ -223,8 +223,6 @@ public class PersonPanel extends JPanel implements IPersonView, IColleague {
             presenter.exportCSV();
     }
 
-    // ── IPersonView ────────────────────────────────────────────────────────
-
     @Override
     public void showPersonList(List<Person> persons, int currentPage, int totalPages) {
         tableModel.setRowCount(0);
@@ -260,8 +258,6 @@ public class PersonPanel extends JPanel implements IPersonView, IColleague {
         genderBox.setSelectedIndex(0);
     }
 
-    // ── ViewInterface ──────────────────────────────────────────────────────
-
     @Override
     public void setPresenter(IPersonPresenter presenter) {
         this.presenter = presenter;
@@ -288,8 +284,6 @@ public class PersonPanel extends JPanel implements IPersonView, IColleague {
         JOptionPane.showMessageDialog(this, msg,
                 MessageManager.msg("dialog.alert.title"), JOptionPane.WARNING_MESSAGE);
     }
-
-    // ── IColleague ─────────────────────────────────────────────────────────
 
     @Override
     public void setMediator(IMediator mediator) {

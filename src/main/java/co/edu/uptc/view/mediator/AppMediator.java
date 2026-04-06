@@ -13,8 +13,6 @@ import co.edu.uptc.view.panels.ProductPanel;
 
 public class AppMediator implements IMediator {
 
-    // ── referencias a todos los colegas ────────────────────────────────────
-    // El mediador conoce a todos. Los colegas solo conocen al mediador.
     private final MainFrame frame;
     private final MenuPanel menuPanel;
     private final PersonPanel personPanel;
@@ -33,10 +31,6 @@ public class AppMediator implements IMediator {
         this.accountingPanel = accountingPanel;
     }
 
-    // ── centro de control ──────────────────────────────────────────────────
-    // Aquí llegan TODOS los eventos de TODOS los paneles.
-    // El mediador decide qué hacer con cada uno.
-    // Los paneles nunca se hablan entre sí directamente.
     @Override
     public void notify(IColleague sender, String event) {
         switch (event) {

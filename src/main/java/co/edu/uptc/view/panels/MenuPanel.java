@@ -15,17 +15,14 @@ import co.edu.uptc.view.interfaces.IMediator;
 
 public class MenuPanel extends JPanel implements IColleague {
 
-    // ── mediador ───────────────────────────────────────────────────────────
     private IMediator mediator;
 
-    // ── labels ─────────────────────────────────────────────────────────────
     private JLabel title;
     private JLabel personsLabel;
     private JLabel productsLabel;
     private JLabel accountingLabel;
     private JLabel exitLabel;
 
-    // ── botones ────────────────────────────────────────────────────────────
     private JButton persons;
     private JButton products;
     private JButton accounting;
@@ -80,8 +77,6 @@ public class MenuPanel extends JPanel implements IColleague {
         return menu;
     }
 
-    // ── eventos ────────────────────────────────────────────────────────────
-
     private void bindEvents() {
         persons.addActionListener(e -> mediator.notify(this, "persons"));
         products.addActionListener(e -> mediator.notify(this, "products"));
@@ -89,7 +84,6 @@ public class MenuPanel extends JPanel implements IColleague {
         exit.addActionListener(e -> mediator.notify(this, "exit"));
     }
 
-    // ── IColleague ─────────────────────────────────────────────────────────
 
     @Override
     public void setMediator(IMediator mediator) {

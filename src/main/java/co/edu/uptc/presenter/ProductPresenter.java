@@ -45,7 +45,6 @@ public class ProductPresenter implements IProductPresenter {
 
     @Override
     public void addProduct(String description, String unit, String price) {
-        // Aplica el estilo según config — la View manda el texto crudo
         String formattedDescription = applyDescriptionStyle(description.trim());
 
         double parsedPrice = parsePrice(price);
@@ -77,7 +76,7 @@ public class ProductPresenter implements IProductPresenter {
         String style = AppConfig.getInstance().getProductDescriptionStyle();
         return switch (style) {
             case "TITLECASE" -> toTitleCase(raw);
-            default -> raw.toUpperCase(); // UPPERCASE es el default
+            default -> raw.toUpperCase();
         };
     }
 
@@ -103,7 +102,6 @@ public class ProductPresenter implements IProductPresenter {
             return;
         }
 
-        // Si al retirar la página actual queda vacía, retrocede
         List<Product> all = model.getProducts();
         int totalPages = totalPages(all.size());
         if (currentPage >= totalPages && currentPage > 0) {
@@ -142,8 +140,6 @@ public class ProductPresenter implements IProductPresenter {
         model.saveFileProduct();
         view.showMessage(MessageManager.msg("product.export.success"));
     }
-
-    // ── helpers ───────────────────────────────────────────────────────────
 
     private void showCurrentPage() {
         List<Product> all = model.getProducts();

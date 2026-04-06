@@ -33,12 +33,10 @@ public class AccountingPanel extends JPanel implements IAccountingView, IColleag
     private IAccountingPresenter presenter;
     private IMediator mediator;
 
-    // ── formulario ────────────────────────────────────────────────────────
     private JTextField description;
     private JComboBox<String> movementType;
     private JTextField value;
 
-    // ── labels ────────────────────────────────────────────────────────────
     private JLabel title;
     private JLabel descriptionTxt;
     private JLabel movementTypeTxt;
@@ -47,17 +45,14 @@ public class AccountingPanel extends JPanel implements IAccountingView, IColleag
     private JLabel statusLabel;
     private JLabel pageLabel;
 
-    // ── botones acciones ──────────────────────────────────────────────────
     private JButton add;
     private JButton list;
     private JButton export;
     private JButton back;
 
-    // ── botones paginado ──────────────────────────────────────────────────
     private JButton prevBtn;
     private JButton nextBtn;
 
-    // ── tabla ─────────────────────────────────────────────────────────────
     private JScrollPane scroll;
     private JTable table;
     private DefaultTableModel tableModel;
@@ -120,7 +115,6 @@ public class AccountingPanel extends JPanel implements IAccountingView, IColleag
         scroll = new JScrollPane(table);
     }
 
-    // Aplica la alineación leída del config a todas las columnas de la tabla
     private void applyTableAlignment() {
         int align = AppConfig.getInstance().getTableAlign();
         DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
@@ -217,8 +211,6 @@ public class AccountingPanel extends JPanel implements IAccountingView, IColleag
             presenter.exportFile();
     }
 
-    // ── IAccountingView ────────────────────────────────────────────────────
-
     @Override
     public void showAccountingList(List<Accounting> accountings, int currentPage, int totalPages) {
         tableModel.setRowCount(0);
@@ -252,8 +244,6 @@ public class AccountingPanel extends JPanel implements IAccountingView, IColleag
         movementType.setSelectedIndex(0);
     }
 
-    // ── ViewInterface ──────────────────────────────────────────────────────
-
     @Override
     public void setPresenter(IAccountingPresenter presenter) {
         this.presenter = presenter;
@@ -280,8 +270,6 @@ public class AccountingPanel extends JPanel implements IAccountingView, IColleag
         JOptionPane.showMessageDialog(this, msg,
                 MessageManager.msg("dialog.alert.title"), JOptionPane.WARNING_MESSAGE);
     }
-
-    // ── IColleague ─────────────────────────────────────────────────────────
 
     @Override
     public void setMediator(IMediator mediator) {

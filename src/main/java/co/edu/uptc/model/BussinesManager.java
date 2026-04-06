@@ -46,9 +46,6 @@ public class BussinesManager implements ModelInterface {
         this.productStorage = productStorage;
         this.accountingStorage = accountingStorage;
 
-        // ── Carga inicial ────────────────────────────────────────────────
-        // Lee los archivos y llena los contenedores al arrancar la app.
-
         for (Person p : personStorage.loadAll()) {
             personBehaviour.add(personContainer, p);
         }
@@ -58,9 +55,6 @@ public class BussinesManager implements ModelInterface {
         }
 
         this.accountingContainer = accountingStorage.loadAll();
-
-        // ── Contadores de ID ─────────────────────────────────────────────
-        // Arranca desde el ID más alto ya existente para evitar colisiones.
 
         personIdCounter = personBehaviour.toList(personContainer).stream()
                 .mapToInt(Person::getId)
@@ -73,17 +67,13 @@ public class BussinesManager implements ModelInterface {
                 .orElse(0);
     }
 
-    // ── Personas ──────────────────────────────────────────────────────────
-
     @Override
     public void addPerson(Person person) {
-        // Solo en memoria — el archivo no se toca hasta que el usuario exporte
         personBehaviour.add(personContainer, person);
     }
 
     @Override
     public Person removePerson() {
-        // Solo en memoria — el archivo no cambia hasta exportar
         return personBehaviour.remove(personContainer);
     }
 
@@ -99,22 +89,16 @@ public class BussinesManager implements ModelInterface {
 
     @Override
     public void saveFilePerson() {
-        // Reescribe el archivo completo con el estado actual en memoria.
-        // Solo se llama cuando el usuario pulsa "Exportar CSV".
         personStorage.overwrite(personBehaviour.toList(personContainer));
     }
 
-    // ── Productos ─────────────────────────────────────────────────────────
-
     @Override
     public void addProduct(Product product) {
-        // Solo en memoria
         productBehaviour.add(productContainer, product);
     }
 
     @Override
     public Product removeProduct() {
-        // Solo en memoria
         return productBehaviour.remove(productContainer);
     }
 
@@ -130,17 +114,12 @@ public class BussinesManager implements ModelInterface {
 
     @Override
     public void saveFileProduct() {
-        // Reescribe el archivo completo con el estado actual en memoria.
-        // Solo se llama cuando el usuario pulsa "Exportar CSV".
         productStorage.overwrite(productBehaviour.toList(productContainer));
     }
 
-    // ── Contabilidad ──────────────────────────────────────────────────────
-
     @Override
     public void addAccounting(Accounting accounting) {
-        // Contabilidad sí guarda inmediatamente — es un log financiero,
-        // no tiene sentido perder movimientos si la app se cierra sin exportar.
+        
         accountingContainer.add(accounting);
         accountingStorage.append(accounting);
     }
@@ -161,7 +140,5 @@ public class BussinesManager implements ModelInterface {
 
     @Override
     public void saveFileAccounting() {
-        // append() ya guarda cada movimiento al momento de agregarlo,
-        // así que este método no necesita hacer nada adicional.
     }
 }

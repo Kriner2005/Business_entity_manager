@@ -4,18 +4,6 @@ import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-
-/**
- * MessageManager — Singleton que centraliza el acceso a los textos de la UI.
- *
- * El idioma se determina desde AppConfig (clave "app.language").
- * Si la clave no existe en el bundle, retorna [clave] visible
- * para que el error sea evidente durante el desarrollo.
- *
- * Uso:
- * MessageManager.msg("menu.main.title")
- * MessageManager.msg("person.input.name", 2, 30)
- */
 public class MessageManager {
 
     private static MessageManager instance;
@@ -56,7 +44,6 @@ public class MessageManager {
         return MessageFormat.format(get(key), args);
     }
 
-    // Método estático de conveniencia — evita getInstance() repetitivo
     public static String msg(String key) {
         return getInstance().get(key);
     }
