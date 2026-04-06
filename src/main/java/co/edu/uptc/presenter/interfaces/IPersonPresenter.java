@@ -10,5 +10,9 @@ public interface IPersonPresenter extends PresenterInterface<IPersonView> {
 
     void listPersons();
 
+    void nextPage();
+
+    void prevPage();
+
     void exportCSV();
 }

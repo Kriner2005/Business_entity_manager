@@ -3,7 +3,9 @@ package co.edu.uptc.presenter;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.List;
 
+import co.edu.uptc.config.AppConfig;
 import co.edu.uptc.interfaces.ModelInterface;
 import co.edu.uptc.model.entities.Person;
 import co.edu.uptc.model.validation.PersonValidator;
@@ -21,11 +23,15 @@ public class PersonPresenter implements IPersonPresenter {
     private final PersonValidator validator;
     private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
+    private final int pageSize;
+    private int currentPage = 0;
+
     public PersonPresenter() {
         this.validator = new PersonValidator(
                 new NameLengthRule("Nombre", 2, 10),
                 new NameLengthRule("Apellido", 2, 10),
                 new DateRule());
+        this.pageSize = AppConfig.getInstance().getPageSize();
     }
 
     @Override
@@ -61,7 +67,7 @@ public class PersonPresenter implements IPersonPresenter {
         }
 
         model.addPerson(person);
-        view.showMessage("Persona agregada correctamente (sin guardar — use Exportar CSV)");
+        view.showMessage("Persona agregada (sin guardar — use Exportar CSV)");
     }
 
     @Override
@@ -72,21 +78,62 @@ public class PersonPresenter implements IPersonPresenter {
             return;
         }
 
+        // Si al retirar la página actual queda vacía, retrocede una página
+        List<Person> all = model.getPersons();
+        int totalPages = totalPages(all.size());
+        if (currentPage >= totalPages && currentPage > 0) {
+            currentPage--;
+        }
+
         view.showRemovedPerson(removed);
         view.showMessage("Persona retirada (sin guardar — use Exportar CSV)");
     }
 
     @Override
     public void listPersons() {
-        view.showPersonList(model.getPersons());
+        currentPage = 0; // al listar siempre empieza en la primera página
+        showCurrentPage();
+    }
+
+    @Override
+    public void nextPage() {
+        List<Person> all = model.getPersons();
+        if ((currentPage + 1) * pageSize < all.size()) {
+            currentPage++;
+        }
+        showCurrentPage();
+    }
+
+    @Override
+    public void prevPage() {
+        if (currentPage > 0) {
+            currentPage--;
+        }
+        showCurrentPage();
     }
 
     @Override
     public void exportCSV() {
-        // Único momento en que se escribe el archivo.
-        // Reescribe todo con el estado actual en memoria.
         model.saveFilePerson();
         view.showMessage("CSV exportado correctamente");
+    }
+
+    // ── helpers ───────────────────────────────────────────────────────────
+
+    private void showCurrentPage() {
+        List<Person> all = model.getPersons();
+        int from  = currentPage * pageSize;
+        int to    = Math.min(from + pageSize, all.size());
+        List<Person> page = all.subList(from, to);
+
+        int totalPages = totalPages(all.size());
+
+        view.showPersonList(page, currentPage + 1, totalPages);
+    }
+
+    private int totalPages(int totalElements) {
+        if (totalElements == 0) return 1;
+        return (int) Math.ceil((double) totalElements / pageSize);
     }
 
     private char parseGender(String gender) {

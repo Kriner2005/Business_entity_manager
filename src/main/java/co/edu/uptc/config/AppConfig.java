@@ -5,7 +5,6 @@ import co.edu.uptc.model.persistence.FileStorageService;
 import co.edu.uptc.model.persistence.serializer.CsvSerializer;
 import co.edu.uptc.model.persistence.serializer.JsonLSerializer;
 
-// IMPORTA TUS ENTIDADES
 import co.edu.uptc.model.entities.Person;
 import co.edu.uptc.model.entities.Product;
 import co.edu.uptc.model.entities.Accounting;
@@ -21,6 +20,9 @@ public class AppConfig {
     private IFileStorage<Product> productStorage;
     private IFileStorage<Accounting> turnStorage;
 
+    // === PAGINADO ===
+    private static final int DEFAULT_PAGE_SIZE = 10;
+
     private AppConfig() {
         this.config = new ConfigLoader();
         initStorage();
@@ -34,26 +36,23 @@ public class AppConfig {
     }
 
     private void initStorage() {
-
         String basePath = config.get("data.path");
 
         personStorage = new FileStorageService<>(
                 basePath + config.get("person.file"),
-                new CsvSerializer<>(Person.class)
-        );
+                new CsvSerializer<>(Person.class));
 
         productStorage = new FileStorageService<>(
                 basePath + config.get("product.file"),
-                new CsvSerializer<>(Product.class)
-        );
+                new CsvSerializer<>(Product.class));
 
         turnStorage = new FileStorageService<>(
                 basePath + config.get("accounting.file"),
-                new JsonLSerializer<>(Accounting.class)
-        );
+                new JsonLSerializer<>(Accounting.class));
     }
 
-    // === GETTERS ===
+    // === GETTERS STORAGES ===
+
     public IFileStorage<Person> getPersonStorage() {
         return personStorage;
     }
@@ -64,5 +63,19 @@ public class AppConfig {
 
     public IFileStorage<Accounting> getTurnStorage() {
         return turnStorage;
+    }
+
+    // === GETTER PAGINADO ===
+
+    public int getPageSize() {
+        String raw = config.get("page.size");
+        if (raw == null || raw.isBlank())
+            return DEFAULT_PAGE_SIZE;
+        try {
+            int val = Integer.parseInt(raw.trim());
+            return val > 0 ? val : DEFAULT_PAGE_SIZE;
+        } catch (NumberFormatException e) {
+            return DEFAULT_PAGE_SIZE;
+        }
     }
 }

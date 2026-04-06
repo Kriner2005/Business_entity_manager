@@ -10,6 +10,9 @@ public interface IProductPresenter extends PresenterInterface<IProductView> {
 
     void listProducts();
 
-    void exportCSV();
+    void nextPage();
 
+    void prevPage();
+
+    void exportCSV();
 }

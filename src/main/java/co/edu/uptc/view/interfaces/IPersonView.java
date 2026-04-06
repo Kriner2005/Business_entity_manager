@@ -7,7 +7,8 @@ import co.edu.uptc.model.entities.Person;
 import co.edu.uptc.presenter.interfaces.IPersonPresenter;
 
 public interface IPersonView extends ViewInterface<IPersonPresenter> {
-    void showPersonList(List<Person> persons);
+    // Muestra la página actual — el presenter ya recortó la sublista
+    void showPersonList(List<Person> persons, int currentPage, int totalPages);
 
     void showRemovedPerson(Person person);
 }

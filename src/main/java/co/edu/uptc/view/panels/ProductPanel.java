@@ -26,7 +26,6 @@ import co.edu.uptc.view.interfaces.IProductView;
 
 public class ProductPanel extends JPanel implements IProductView, IColleague {
 
-    // ── presenter y mediador ───────────────────────────────────────────────
     private IProductPresenter presenter;
     private IMediator mediator;
 
@@ -41,13 +40,18 @@ public class ProductPanel extends JPanel implements IProductView, IColleague {
     private JLabel unitTxt;
     private JLabel priceTxt;
     private JLabel statusLabel;
+    private JLabel pageLabel;
 
-    // ── botones ───────────────────────────────────────────────────────────
+    // ── botones acciones ──────────────────────────────────────────────────
     private JButton add;
     private JButton remove;
     private JButton list;
     private JButton export;
     private JButton back;
+
+    // ── botones paginado ──────────────────────────────────────────────────
+    private JButton prevBtn;
+    private JButton nextBtn;
 
     // ── tabla ─────────────────────────────────────────────────────────────
     private JScrollPane scroll;
@@ -64,57 +68,51 @@ public class ProductPanel extends JPanel implements IProductView, IColleague {
 
         initComponents();
 
-        add(buildNorth(), BorderLayout.NORTH);
+        add(buildNorth(),  BorderLayout.NORTH);
         add(buildCenter(), BorderLayout.CENTER);
-        add(buildSouth(), BorderLayout.SOUTH);
+        add(buildSouth(),  BorderLayout.SOUTH);
 
         bindEvents();
     }
 
     private void initComponents() {
-        // labels
-        title       = new JLabel("Gestión de Productos", SwingConstants.CENTER);
+        title          = new JLabel("Gestión de Productos", SwingConstants.CENTER);
         descriptionTxt = new JLabel("Descripción:");
-        unitTxt     = new JLabel("Unidad:");
-        priceTxt    = new JLabel("Precio:");
-        statusLabel = new JLabel(" ");
+        unitTxt        = new JLabel("Unidad:");
+        priceTxt       = new JLabel("Precio:");
+        statusLabel    = new JLabel(" ");
+        pageLabel      = new JLabel("Página 1 de 1", SwingConstants.CENTER);
 
-        // campos
         description = new JTextField(20);
         unit = new JComboBox<>(new DefaultComboBoxModel<>(new String[] {
             "KILO", "LIBRA", "BULTO", "TONELADA", "LITRO", "UNIDAD", "OTRO"
         }));
         price = new JTextField(10);
 
-        // botones
         add    = new JButton("Agregar");
         remove = new JButton("Retirar");
         list   = new JButton("Listar");
         export = new JButton("Exportar CSV");
         back   = new JButton("← Volver");
 
-        // tabla
+        prevBtn = new JButton("◀ Anterior");
+        nextBtn = new JButton("Siguiente ▶");
+
         tableModel = new DefaultTableModel(
                 new String[] { "ID", "Descripción", "Unidad", "Precio" }, 0) {
-            @Override
-            public boolean isCellEditable(int row, int col) {
-                return false;
-            }
+            @Override public boolean isCellEditable(int r, int c) { return false; }
         };
         table  = new JTable(tableModel);
         scroll = new JScrollPane(table);
     }
 
-    // ── construcción de secciones ──────────────────────────────────────────
-
-    private JLabel buildNorth() {
-        return title;
-    }
+    private JLabel buildNorth() { return title; }
 
     private JPanel buildCenter() {
         JPanel center = new JPanel(new BorderLayout(10, 10));
-        center.add(buildForm(), BorderLayout.NORTH);
-        center.add(scroll, BorderLayout.CENTER);
+        center.add(buildForm(),   BorderLayout.NORTH);
+        center.add(scroll,        BorderLayout.CENTER);
+        center.add(buildPaging(), BorderLayout.SOUTH);
         return center;
     }
 
@@ -122,16 +120,21 @@ public class ProductPanel extends JPanel implements IProductView, IColleague {
         JPanel form = new JPanel(new GridLayout(2, 4, 8, 8));
         form.setBorder(BorderFactory.createTitledBorder("Datos"));
 
-        form.add(descriptionTxt);
-        form.add(description);
-        form.add(unitTxt);
-        form.add(unit);
-        form.add(priceTxt);
-        form.add(price);
-        form.add(new JLabel()); // celda vacía para mantener el grid alineado
-        form.add(new JLabel());
+        form.add(descriptionTxt); form.add(description);
+        form.add(unitTxt);        form.add(unit);
+        form.add(priceTxt);       form.add(price);
+        form.add(new JLabel());   form.add(new JLabel());
 
         return form;
+    }
+
+    // Barra de paginado: [◀ Anterior]  Página 1 de 3  [Siguiente ▶]
+    private JPanel buildPaging() {
+        JPanel paging = new JPanel(new BorderLayout(8, 0));
+        paging.add(prevBtn,   BorderLayout.WEST);
+        paging.add(pageLabel, BorderLayout.CENTER);
+        paging.add(nextBtn,   BorderLayout.EAST);
+        return paging;
     }
 
     private JPanel buildSouth() {
@@ -144,12 +147,10 @@ public class ProductPanel extends JPanel implements IProductView, IColleague {
         buttons.add(export);
         buttons.add(back);
 
-        south.add(buttons, BorderLayout.WEST);
+        south.add(buttons,     BorderLayout.WEST);
         south.add(statusLabel, BorderLayout.CENTER);
         return south;
     }
-
-    // ── eventos ────────────────────────────────────────────────────────────
 
     private void bindEvents() {
         add.addActionListener(e    -> onAdd());
@@ -157,39 +158,20 @@ public class ProductPanel extends JPanel implements IProductView, IColleague {
         list.addActionListener(e   -> onList());
         export.addActionListener(e -> onExport());
         back.addActionListener(e   -> mediator.notify(this, "back"));
+
+        prevBtn.addActionListener(e -> { if (presenter != null) presenter.prevPage(); });
+        nextBtn.addActionListener(e -> { if (presenter != null) presenter.nextPage(); });
     }
 
-    private void onAdd() {
-        if (presenter != null) {
-            presenter.addProduct(
-                    description.getText().toUpperCase().trim(),
-                    unit.getSelectedItem().toString(),
-                    price.getText());
-        }
-    }
-
-    private void onRemove() {
-        if (presenter != null) {
-            presenter.removeProduct();
-        }
-    }
-
-    private void onList() {
-        if (presenter != null) {
-            presenter.listProducts();
-        }
-    }
-
-    private void onExport() {
-        if (presenter != null) {
-            presenter.exportCSV();
-        }
-    }
+    private void onAdd()    { if (presenter != null) presenter.addProduct(description.getText().toUpperCase().trim(), unit.getSelectedItem().toString(), price.getText()); }
+    private void onRemove() { if (presenter != null) presenter.removeProduct(); }
+    private void onList()   { if (presenter != null) presenter.listProducts(); }
+    private void onExport() { if (presenter != null) presenter.exportCSV(); }
 
     // ── IProductView ───────────────────────────────────────────────────────
 
     @Override
-    public void showProductList(List<Product> products) {
+    public void showProductList(List<Product> products, int currentPage, int totalPages) {
         tableModel.setRowCount(0);
         for (Product p : products) {
             tableModel.addRow(new Object[] {
@@ -199,6 +181,10 @@ public class ProductPanel extends JPanel implements IProductView, IColleague {
                     String.format("%,.2f", p.getPrice())
             });
         }
+        pageLabel.setText("Página " + currentPage + " de " + totalPages);
+
+        prevBtn.setEnabled(currentPage > 1);
+        nextBtn.setEnabled(currentPage < totalPages);
     }
 
     @Override
@@ -207,20 +193,13 @@ public class ProductPanel extends JPanel implements IProductView, IColleague {
                 "Producto retirado: " + product.getDescription()
                 + " | " + product.getUnit()
                 + " | $" + String.format("%,.2f", product.getPrice()),
-                "Retirado",
-                JOptionPane.INFORMATION_MESSAGE);
+                "Retirado", JOptionPane.INFORMATION_MESSAGE);
     }
 
     // ── ViewInterface ──────────────────────────────────────────────────────
 
-    @Override
-    public void setPresenter(IProductPresenter presenter) {
-        this.presenter = presenter;
-    }
-
-    @Override
-    public void start() {
-    }
+    @Override public void setPresenter(IProductPresenter presenter) { this.presenter = presenter; }
+    @Override public void start() {}
 
     @Override
     public void showMessage(String msg) {
@@ -241,8 +220,5 @@ public class ProductPanel extends JPanel implements IProductView, IColleague {
 
     // ── IColleague ─────────────────────────────────────────────────────────
 
-    @Override
-    public void setMediator(IMediator mediator) {
-        this.mediator = mediator;
-    }
+    @Override public void setMediator(IMediator mediator) { this.mediator = mediator; }
 }
