@@ -25,7 +25,7 @@ public class Runner {
                 new DoubleLinkedList<>(), new Stack<>(),
                 config.getPersonStorage(),
                 config.getProductStorage(),
-                config.getTurnStorage());
+                config.getAccountingStorage());
     }
 
     private void buildPresenter() {
