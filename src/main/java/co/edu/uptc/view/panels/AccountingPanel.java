@@ -70,40 +70,43 @@ public class AccountingPanel extends JPanel implements IAccountingView, IColleag
 
         initComponents();
 
-        add(buildNorth(),  BorderLayout.NORTH);
+        add(buildNorth(), BorderLayout.NORTH);
         add(buildCenter(), BorderLayout.CENTER);
-        add(buildSouth(),  BorderLayout.SOUTH);
+        add(buildSouth(), BorderLayout.SOUTH);
 
         bindEvents();
         applyTableAlignment();
     }
 
     private void initComponents() {
-        title             = new JLabel("Gestión de Contabilidad", SwingConstants.CENTER);
-        descriptionTxt    = new JLabel("Descripción:");
-        movementTypeTxt   = new JLabel("Tipo de movimiento:");
-        valueTxt          = new JLabel("Valor:");
+        title = new JLabel("Gestión de Contabilidad", SwingConstants.CENTER);
+        descriptionTxt = new JLabel("Descripción:");
+        movementTypeTxt = new JLabel("Tipo de movimiento:");
+        valueTxt = new JLabel("Valor:");
         totalBalanceLabel = new JLabel("Saldo total: $0.00");
-        statusLabel       = new JLabel(" ");
-        pageLabel         = new JLabel("Página 1 de 1", SwingConstants.CENTER);
+        statusLabel = new JLabel(" ");
+        pageLabel = new JLabel("Página 1 de 1", SwingConstants.CENTER);
 
-        description  = new JTextField(20);
+        description = new JTextField(20);
         movementType = new JComboBox<>(new DefaultComboBoxModel<>(new String[] { "INGRESO", "EGRESO" }));
-        value        = new JTextField(10);
+        value = new JTextField(10);
 
-        add    = new JButton("Agregar");
-        list   = new JButton("Listar");
+        add = new JButton("Agregar");
+        list = new JButton("Listar");
         export = new JButton("Exportar");
-        back   = new JButton("← Volver");
+        back = new JButton("← Volver");
 
         prevBtn = new JButton("◀ Anterior");
         nextBtn = new JButton("Siguiente ▶");
 
         tableModel = new DefaultTableModel(
                 new String[] { "Descripción", "Tipo", "Valor", "Fecha/Hora" }, 0) {
-            @Override public boolean isCellEditable(int r, int c) { return false; }
+            @Override
+            public boolean isCellEditable(int r, int c) {
+                return false;
+            }
         };
-        table  = new JTable(tableModel);
+        table = new JTable(tableModel);
         scroll = new JScrollPane(table);
     }
 
@@ -118,12 +121,14 @@ public class AccountingPanel extends JPanel implements IAccountingView, IColleag
         }
     }
 
-    private JLabel buildNorth() { return title; }
+    private JLabel buildNorth() {
+        return title;
+    }
 
     private JPanel buildCenter() {
         JPanel center = new JPanel(new BorderLayout(10, 10));
-        center.add(buildForm(),   BorderLayout.NORTH);
-        center.add(scroll,        BorderLayout.CENTER);
+        center.add(buildForm(), BorderLayout.NORTH);
+        center.add(scroll, BorderLayout.CENTER);
         center.add(buildPaging(), BorderLayout.SOUTH);
         return center;
     }
@@ -132,19 +137,23 @@ public class AccountingPanel extends JPanel implements IAccountingView, IColleag
         JPanel form = new JPanel(new GridLayout(2, 4, 8, 8));
         form.setBorder(BorderFactory.createTitledBorder("Datos"));
 
-        form.add(descriptionTxt);  form.add(description);
-        form.add(movementTypeTxt); form.add(movementType);
-        form.add(valueTxt);        form.add(value);
-        form.add(new JLabel());    form.add(new JLabel());
+        form.add(descriptionTxt);
+        form.add(description);
+        form.add(movementTypeTxt);
+        form.add(movementType);
+        form.add(valueTxt);
+        form.add(value);
+        form.add(new JLabel());
+        form.add(new JLabel());
 
         return form;
     }
 
     private JPanel buildPaging() {
         JPanel paging = new JPanel(new BorderLayout(8, 0));
-        paging.add(prevBtn,   BorderLayout.WEST);
+        paging.add(prevBtn, BorderLayout.WEST);
         paging.add(pageLabel, BorderLayout.CENTER);
-        paging.add(nextBtn,   BorderLayout.EAST);
+        paging.add(nextBtn, BorderLayout.EAST);
         return paging;
     }
 
@@ -162,23 +171,41 @@ public class AccountingPanel extends JPanel implements IAccountingView, IColleag
         info.add(statusLabel);
 
         south.add(buttons, BorderLayout.WEST);
-        south.add(info,    BorderLayout.CENTER);
+        south.add(info, BorderLayout.CENTER);
         return south;
     }
 
     private void bindEvents() {
-        add.addActionListener(e    -> onAdd());
-        list.addActionListener(e   -> onList());
+        add.addActionListener(e -> onAdd());
+        list.addActionListener(e -> onList());
         export.addActionListener(e -> onExport());
-        back.addActionListener(e   -> mediator.notify(this, "back"));
+        back.addActionListener(e -> mediator.notify(this, "back"));
 
-        prevBtn.addActionListener(e -> { if (presenter != null) presenter.prevPage(); });
-        nextBtn.addActionListener(e -> { if (presenter != null) presenter.nextPage(); });
+        prevBtn.addActionListener(e -> {
+            if (presenter != null)
+                presenter.prevPage();
+        });
+        nextBtn.addActionListener(e -> {
+            if (presenter != null)
+                presenter.nextPage();
+        });
     }
 
-    private void onAdd()    { if (presenter != null) presenter.addAccounting(description.getText().trim(), movementType.getSelectedItem().toString(), value.getText().trim()); }
-    private void onList()   { if (presenter != null) presenter.listAccounting(); }
-    private void onExport() { if (presenter != null) presenter.exportFile(); }
+    private void onAdd() {
+        if (presenter != null)
+            presenter.addAccounting(description.getText().trim(), movementType.getSelectedItem().toString(),
+                    value.getText().trim());
+    }
+
+    private void onList() {
+        if (presenter != null)
+            presenter.listAccounting();
+    }
+
+    private void onExport() {
+        if (presenter != null)
+            presenter.exportFile();
+    }
 
     // ── IAccountingView ────────────────────────────────────────────────────
 
@@ -205,10 +232,23 @@ public class AccountingPanel extends JPanel implements IAccountingView, IColleag
                 total >= 0 ? new java.awt.Color(0, 128, 0) : java.awt.Color.RED);
     }
 
+    @Override
+    public void clearForm() {
+        description.setText("");
+        value.setText("");
+        movementType.setSelectedIndex(0);
+    }
+
     // ── ViewInterface ──────────────────────────────────────────────────────
 
-    @Override public void setPresenter(IAccountingPresenter presenter) { this.presenter = presenter; }
-    @Override public void start() {}
+    @Override
+    public void setPresenter(IAccountingPresenter presenter) {
+        this.presenter = presenter;
+    }
+
+    @Override
+    public void start() {
+    }
 
     @Override
     public void showMessage(String msg) {
@@ -229,5 +269,8 @@ public class AccountingPanel extends JPanel implements IAccountingView, IColleag
 
     // ── IColleague ─────────────────────────────────────────────────────────
 
-    @Override public void setMediator(IMediator mediator) { this.mediator = mediator; }
+    @Override
+    public void setMediator(IMediator mediator) {
+        this.mediator = mediator;
+    }
 }

@@ -209,6 +209,14 @@ public class PersonPanel extends JPanel implements IPersonView, IColleague {
                 "Retirado", JOptionPane.INFORMATION_MESSAGE);
     }
 
+    @Override
+public void clearForm() {
+    name.setText("");
+    lastName.setText("");
+    birthDate.setText("yyyy-MM-dd");
+    genderBox.setSelectedIndex(0);
+}
+
     // ── ViewInterface ──────────────────────────────────────────────────────
 
     @Override public void setPresenter(IPersonPresenter presenter) { this.presenter = presenter; }

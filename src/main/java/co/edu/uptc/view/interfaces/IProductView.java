@@ -11,4 +11,6 @@ public interface IProductView extends ViewInterface<IProductPresenter> {
     void showProductList(List<Product> products, int currentPage, int totalPages);
 
     void showRemovedProduct(Product product);
+
+    void clearForm();
 }

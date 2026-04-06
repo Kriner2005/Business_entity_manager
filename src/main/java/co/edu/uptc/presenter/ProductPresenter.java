@@ -67,6 +67,7 @@ public class ProductPresenter implements IProductPresenter {
 
         model.addProduct(product);
         view.showMessage("Producto agregado (sin guardar — use Exportar CSV)");
+        view.clearForm();  
     }
 
     private String applyDescriptionStyle(String raw) {

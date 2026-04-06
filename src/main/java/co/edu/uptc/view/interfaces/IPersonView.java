@@ -11,4 +11,6 @@ public interface IPersonView extends ViewInterface<IPersonPresenter> {
     void showPersonList(List<Person> persons, int currentPage, int totalPages);
 
     void showRemovedPerson(Person person);
+
+    void clearForm();
 }

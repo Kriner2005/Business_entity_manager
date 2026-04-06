@@ -239,6 +239,13 @@ public class ProductPanel extends JPanel implements IProductView, IColleague {
                 "Retirado", JOptionPane.INFORMATION_MESSAGE);
     }
 
+    @Override
+public void clearForm() {
+    description.setText("");
+    price.setText("");
+    unit.setSelectedIndex(0);
+}
+
     // ── ViewInterface ──────────────────────────────────────────────────────
 
     @Override

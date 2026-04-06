@@ -71,6 +71,7 @@ public class PersonPresenter implements IPersonPresenter {
 
         model.addPerson(person);
         view.showMessage("Persona agregada (sin guardar — use Exportar CSV)");
+        view.clearForm();  
     }
 
     @Override

@@ -67,6 +67,7 @@ public class AccountingPresenter implements IAccountingPresenter {
         model.addAccounting(accounting);
         view.showMessage("Movimiento registrado correctamente.");
         view.showTotalBalance(model.getTotalBalance());
+        view.clearForm();  
     }
 
     @Override
