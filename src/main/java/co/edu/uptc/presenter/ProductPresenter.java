@@ -17,7 +17,9 @@ public class ProductPresenter implements IProductPresenter {
     private final ProductValidator validator;
 
     public ProductPresenter() {
-        this.validator = new ProductValidator(new NotBlankRule("Descripción"), new PriceRule(10_000_000));
+        this.validator = new ProductValidator(
+                new NotBlankRule("Descripción"),
+                new PriceRule(10_000_000));
     }
 
     @Override
@@ -39,7 +41,11 @@ public class ProductPresenter implements IProductPresenter {
             return;
         }
 
-        Product product = new Product(model.createProductId(), description, unit.trim(), parsedPrice);
+        Product product = new Product(
+                model.createProductId(),
+                description.trim(),
+                unit.trim(),
+                parsedPrice);
 
         ValidationResult result = validator.validate(product);
         if (!result.isValid()) {
@@ -48,20 +54,20 @@ public class ProductPresenter implements IProductPresenter {
         }
 
         model.addProduct(product);
-        view.showMessage("Producto agregado correctamente");
+        view.showMessage("Producto agregado correctamente (sin guardar — use Exportar CSV)");
     }
 
     @Override
     public void removeProduct() {
-        Product removedPropdutc = model.removeProduct();
+        Product removed = model.removeProduct();
 
-        if (removedPropdutc == null) {
-            view.showError("NO hay prodcuctos en la lista");
+        if (removed == null) {
+            view.showError("No hay productos en la lista");
             return;
         }
 
-        view.showRemovedProduct(removedPropdutc);
-        view.showMessage("Producto retirado de la lista");
+        view.showRemovedProduct(removed);
+        view.showMessage("Producto retirado (sin guardar — use Exportar CSV)");
     }
 
     @Override
@@ -71,12 +77,14 @@ public class ProductPresenter implements IProductPresenter {
 
     @Override
     public void exportCSV() {
-        view.showAlert("Exportación CSV — próximamente.");
+        // Único momento en que se escribe el archivo.
+        // Reescribe todo con el estado actual en memoria.
+        model.saveFileProduct();
+        view.showMessage("CSV exportado correctamente");
     }
 
     private double parsePrice(String raw) {
-        if (raw == null || raw.isBlank())
-            return -1.0;
+        if (raw == null || raw.isBlank()) return -1.0;
         try {
             return Double.parseDouble(raw.trim().replace(",", "."));
         } catch (NumberFormatException e) {

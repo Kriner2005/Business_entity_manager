@@ -47,9 +47,7 @@ public class BussinesManager implements ModelInterface {
         this.accountingStorage = accountingStorage;
 
         // ── Carga inicial ────────────────────────────────────────────────
-        // Lee cada archivo y mete los registros en el contenedor
-        // correspondiente usando el comportamiento correcto (Queue / Stack).
-        // Así, al arrancar la app, los datos ya existen en memoria.
+        // Lee los archivos y llena los contenedores al arrancar la app.
 
         for (Person p : personStorage.loadAll()) {
             personBehaviour.add(personContainer, p);
@@ -59,18 +57,15 @@ public class BussinesManager implements ModelInterface {
             productBehaviour.add(productContainer, p);
         }
 
-        // accounting ya viene como List, no necesita contenedor propio
         this.accountingContainer = accountingStorage.loadAll();
 
-        // ── Inicializar contadores de ID ─────────────────────────────────
-        // Si no hacemos esto, al reiniciar la app los IDs vuelven a 1
-        // y colisionan con los registros que ya estaban guardados.
-        // Buscamos el ID más alto que ya existe y arrancamos desde ahí.
+        // ── Contadores de ID ─────────────────────────────────────────────
+        // Arranca desde el ID más alto ya existente para evitar colisiones.
 
         personIdCounter = personBehaviour.toList(personContainer).stream()
                 .mapToInt(Person::getId)
                 .max()
-                .orElse(0); // si el archivo estaba vacío, empieza en 0
+                .orElse(0);
 
         productIdCounter = productBehaviour.toList(productContainer).stream()
                 .mapToInt(Product::getId)
@@ -78,14 +73,17 @@ public class BussinesManager implements ModelInterface {
                 .orElse(0);
     }
 
-      @Override
+    // ── Personas ──────────────────────────────────────────────────────────
+
+    @Override
     public void addPerson(Person person) {
+        // Solo en memoria — el archivo no se toca hasta que el usuario exporte
         personBehaviour.add(personContainer, person);
-        personStorage.append(person); // guarda inmediatamente en disco
     }
 
     @Override
     public Person removePerson() {
+        // Solo en memoria — el archivo no cambia hasta exportar
         return personBehaviour.remove(personContainer);
     }
 
@@ -99,22 +97,24 @@ public class BussinesManager implements ModelInterface {
         return ++personIdCounter;
     }
 
-      @Override
+    @Override
     public void saveFilePerson() {
-        // Reescribe el archivo completo con todos los registros actuales.
-        // Útil si hubo retiros (removes) que cambiaron el estado en memoria
-        // y queremos que el archivo refleje exactamente lo que hay ahora.
+        // Reescribe el archivo completo con el estado actual en memoria.
+        // Solo se llama cuando el usuario pulsa "Exportar CSV".
         personStorage.overwrite(personBehaviour.toList(personContainer));
     }
 
-       @Override
+    // ── Productos ─────────────────────────────────────────────────────────
+
+    @Override
     public void addProduct(Product product) {
+        // Solo en memoria
         productBehaviour.add(productContainer, product);
-        productStorage.append(product); // guarda inmediatamente en disco
     }
 
     @Override
     public Product removeProduct() {
+        // Solo en memoria
         return productBehaviour.remove(productContainer);
     }
 
@@ -128,18 +128,22 @@ public class BussinesManager implements ModelInterface {
         return ++productIdCounter;
     }
 
-      @Override
+    @Override
     public void saveFileProduct() {
-        // Igual que saveFilePerson: reescribe todo desde cero.
+        // Reescribe el archivo completo con el estado actual en memoria.
+        // Solo se llama cuando el usuario pulsa "Exportar CSV".
         productStorage.overwrite(productBehaviour.toList(productContainer));
     }
 
-   @Override
+    // ── Contabilidad ──────────────────────────────────────────────────────
+
+    @Override
     public void addAccounting(Accounting accounting) {
+        // Contabilidad sí guarda inmediatamente — es un log financiero,
+        // no tiene sentido perder movimientos si la app se cierra sin exportar.
         accountingContainer.add(accounting);
-        accountingStorage.append(accounting); // guarda inmediatamente en disco
+        accountingStorage.append(accounting);
     }
- 
 
     @Override
     public List<Accounting> getAccountingMovements() {
@@ -157,8 +161,7 @@ public class BussinesManager implements ModelInterface {
 
     @Override
     public void saveFileAccounting() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'saveFileAccounting'");
+        // append() ya guarda cada movimiento al momento de agregarlo,
+        // así que este método no necesita hacer nada adicional.
     }
-
 }
