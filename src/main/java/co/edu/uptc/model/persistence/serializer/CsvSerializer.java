@@ -3,11 +3,14 @@ package co.edu.uptc.model.persistence.serializer;
 import java.io.StringReader;
 import java.io.StringWriter;
 
+import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
 import com.opencsv.bean.StatefulBeanToCsv;
 import com.opencsv.bean.StatefulBeanToCsvBuilder;
+import com.opencsv.ICSVWriter;
 
 import co.edu.uptc.interfaces.ISerializer;
 
@@ -25,6 +28,7 @@ public class CsvSerializer<T> implements ISerializer<T> {
             StringWriter sw = new StringWriter();
             StatefulBeanToCsv<T> writer = new StatefulBeanToCsvBuilder<T>(sw)
                     .withSeparator(';')
+                    .withQuotechar(ICSVWriter.NO_QUOTE_CHARACTER) // sin comillas
                     .build();
             writer.write(entity);
             return sw.toString().trim();
@@ -36,7 +40,15 @@ public class CsvSerializer<T> implements ISerializer<T> {
     @Override
     public T deserialize(String line) {
         try {
-            CSVReader reader = new CSVReader(new StringReader(line));
+            CSVReader reader = new CSVReaderBuilder(new StringReader(line))
+                    .withCSVParser(
+                        new CSVParserBuilder()
+                            .withSeparator(';')
+                            .withQuoteChar(ICSVWriter.NO_QUOTE_CHARACTER) // sin comillas
+                            .build()
+                    )
+                    .build();
+
             CsvToBean<T> csv = new CsvToBeanBuilder<T>(reader)
                     .withType(type)
                     .withSeparator(';')

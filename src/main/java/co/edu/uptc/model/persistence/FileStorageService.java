@@ -14,16 +14,18 @@ import co.edu.uptc.interfaces.ISerializer;
 import co.edu.uptc.interfaces.IFileStorage;
 
 public class FileStorageService<T> implements IFileStorage<T> {
-    private final Path filePath;
 
+    private final Path filePath;
     private final ISerializer<T> serializer;
 
     public FileStorageService(String filePath, ISerializer<T> serializer) {
-        this.filePath = Paths.get(filePath);
+        this.filePath   = Paths.get(filePath);
         this.serializer = serializer;
         ensureFileExists();
     }
 
+    // Agrega UNA línea al final del archivo.
+    // Se usa cuando se agrega un registro nuevo — no reescribe nada.
     @Override
     public void append(T entity) {
         String line = serializer.serialize(entity);
@@ -38,6 +40,8 @@ public class FileStorageService<T> implements IFileStorage<T> {
         }
     }
 
+    // Lee el archivo completo y devuelve todos los registros como lista.
+    // Se llama una sola vez al arrancar la app.
     @Override
     public List<T> loadAll() {
         List<T> result = new ArrayList<>();
@@ -54,6 +58,23 @@ public class FileStorageService<T> implements IFileStorage<T> {
         return result;
     }
 
+    // Borra el contenido del archivo y lo reescribe con todos los registros.
+    // Se usa cuando hubo retiros: el archivo debe quedar igual que la memoria.
+    @Override
+    public void overwrite(List<T> entities) {
+        try (BufferedWriter writer = Files.newBufferedWriter(
+                filePath,
+                StandardOpenOption.TRUNCATE_EXISTING,  // borra el contenido anterior
+                StandardOpenOption.CREATE)) {
+            for (T entity : entities) {
+                writer.write(serializer.serialize(entity));
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Error reescribiendo archivo: " + filePath, e);
+        }
+    }
+
     private void ensureFileExists() {
         try {
             Files.createDirectories(filePath.getParent());
@@ -64,5 +85,4 @@ public class FileStorageService<T> implements IFileStorage<T> {
             throw new RuntimeException("Error creando archivo: " + filePath, e);
         }
     }
-
 }

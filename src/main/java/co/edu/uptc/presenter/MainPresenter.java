@@ -13,9 +13,8 @@ public class MainPresenter implements PresenterInterface<ViewInterface<?>> {
     private final ProductPresenter productPresenter = new ProductPresenter();
     private final AccountingPresenter accountingPresenter = new AccountingPresenter();
     private final AppConfig config = AppConfig.getInstance();
-    
+
     public MainPresenter() {
-        
     }
 
     @Override

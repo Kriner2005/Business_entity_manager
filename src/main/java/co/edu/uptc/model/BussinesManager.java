@@ -21,9 +21,10 @@ public class BussinesManager implements ModelInterface {
     private final IStructureCollection<IContainer<Product>, Product> productBehaviour;
 
     private final List<Accounting> accountingContainer;
-    private final IFileStorage<Accounting> accountingStorage;
+
     private final IFileStorage<Person> personStorage;
     private final IFileStorage<Product> productStorage;
+    private final IFileStorage<Accounting> accountingStorage;
 
     private int personIdCounter;
     private int productIdCounter;
@@ -39,20 +40,48 @@ public class BussinesManager implements ModelInterface {
 
         this.personContainer = personContainer;
         this.personBehaviour = personBehaviour;
-
         this.productContainer = productContainer;
         this.productBehaviour = productBehaviour;
-
         this.personStorage = personStorage;
         this.productStorage = productStorage;
-
         this.accountingStorage = accountingStorage;
+
+        // ── Carga inicial ────────────────────────────────────────────────
+        // Lee cada archivo y mete los registros en el contenedor
+        // correspondiente usando el comportamiento correcto (Queue / Stack).
+        // Así, al arrancar la app, los datos ya existen en memoria.
+
+        for (Person p : personStorage.loadAll()) {
+            personBehaviour.add(personContainer, p);
+        }
+
+        for (Product p : productStorage.loadAll()) {
+            productBehaviour.add(productContainer, p);
+        }
+
+        // accounting ya viene como List, no necesita contenedor propio
         this.accountingContainer = accountingStorage.loadAll();
+
+        // ── Inicializar contadores de ID ─────────────────────────────────
+        // Si no hacemos esto, al reiniciar la app los IDs vuelven a 1
+        // y colisionan con los registros que ya estaban guardados.
+        // Buscamos el ID más alto que ya existe y arrancamos desde ahí.
+
+        personIdCounter = personBehaviour.toList(personContainer).stream()
+                .mapToInt(Person::getId)
+                .max()
+                .orElse(0); // si el archivo estaba vacío, empieza en 0
+
+        productIdCounter = productBehaviour.toList(productContainer).stream()
+                .mapToInt(Product::getId)
+                .max()
+                .orElse(0);
     }
 
-    @Override
+      @Override
     public void addPerson(Person person) {
         personBehaviour.add(personContainer, person);
+        personStorage.append(person); // guarda inmediatamente en disco
     }
 
     @Override
@@ -70,18 +99,18 @@ public class BussinesManager implements ModelInterface {
         return ++personIdCounter;
     }
 
-    @Override
+      @Override
     public void saveFilePerson() {
-        List<Person> persons = personBehaviour.toList(personContainer);
-
-        for (Person p : persons) {
-            personStorage.append(p);
-        }
+        // Reescribe el archivo completo con todos los registros actuales.
+        // Útil si hubo retiros (removes) que cambiaron el estado en memoria
+        // y queremos que el archivo refleje exactamente lo que hay ahora.
+        personStorage.overwrite(personBehaviour.toList(personContainer));
     }
 
-    @Override
+       @Override
     public void addProduct(Product product) {
         productBehaviour.add(productContainer, product);
+        productStorage.append(product); // guarda inmediatamente en disco
     }
 
     @Override
@@ -99,17 +128,18 @@ public class BussinesManager implements ModelInterface {
         return ++productIdCounter;
     }
 
-    @Override
+      @Override
     public void saveFileProduct() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'saveFileProduct'");
+        // Igual que saveFilePerson: reescribe todo desde cero.
+        productStorage.overwrite(productBehaviour.toList(productContainer));
     }
 
-    @Override
+   @Override
     public void addAccounting(Accounting accounting) {
         accountingContainer.add(accounting);
-        accountingStorage.append(accounting);
+        accountingStorage.append(accounting); // guarda inmediatamente en disco
     }
+ 
 
     @Override
     public List<Accounting> getAccountingMovements() {

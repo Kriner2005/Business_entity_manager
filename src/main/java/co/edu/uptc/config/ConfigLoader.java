@@ -7,7 +7,7 @@ import java.util.Properties;
 
 public class ConfigLoader {
 
-    private static final String INTERNAL_FILE = "congif.properties";
+    private static final String INTERNAL_FILE = "config.properties";
     private static final String EXTERNAL_FILE = "config/config.properties";
 
     private final Properties props = new Properties();
