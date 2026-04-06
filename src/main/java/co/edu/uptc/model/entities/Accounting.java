@@ -1,4 +1,4 @@
-package co.edu.uptc.model.entity;
+package co.edu.uptc.model.entities;
 
 import java.time.LocalDateTime;
 import co.edu.uptc.enums.MovementType;

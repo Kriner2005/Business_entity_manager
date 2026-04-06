@@ -18,7 +18,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
 
-import co.edu.uptc.model.entity.Accounting;
+import co.edu.uptc.model.entities.Accounting;
 import co.edu.uptc.presenter.interfaces.IAccountingPresenter;
 import co.edu.uptc.view.interfaces.IAccountingView;
 import co.edu.uptc.view.interfaces.IColleague;

@@ -8,9 +8,9 @@ import co.edu.uptc.interfaces.IContainer;
 import co.edu.uptc.interfaces.IFileStorage;
 import co.edu.uptc.interfaces.IStructureCollection;
 import co.edu.uptc.interfaces.ModelInterface;
-import co.edu.uptc.model.entity.Accounting;
-import co.edu.uptc.model.entity.Person;
-import co.edu.uptc.model.entity.Product;
+import co.edu.uptc.model.entities.Accounting;
+import co.edu.uptc.model.entities.Person;
+import co.edu.uptc.model.entities.Product;
 
 public class BussinesManager implements ModelInterface {
 
@@ -22,6 +22,8 @@ public class BussinesManager implements ModelInterface {
 
     private final List<Accounting> accountingContainer;
     private final IFileStorage<Accounting> accountingStorage;
+    private final IFileStorage<Person> personStorage;
+    private final IFileStorage<Product> productStorage;
 
     private int personIdCounter;
     private int productIdCounter;
@@ -31,6 +33,8 @@ public class BussinesManager implements ModelInterface {
             IStructureCollection<IContainer<Person>, Person> personBehaviour,
             IContainer<Product> productContainer,
             IStructureCollection<IContainer<Product>, Product> productBehaviour,
+            IFileStorage<Person> personStorage,
+            IFileStorage<Product> productStorage,
             IFileStorage<Accounting> accountingStorage) {
 
         this.personContainer = personContainer;
@@ -38,8 +42,11 @@ public class BussinesManager implements ModelInterface {
 
         this.productContainer = productContainer;
         this.productBehaviour = productBehaviour;
-        this.accountingStorage = accountingStorage;
 
+        this.personStorage = personStorage;
+        this.productStorage = productStorage;
+
+        this.accountingStorage = accountingStorage;
         this.accountingContainer = accountingStorage.loadAll();
     }
 
@@ -64,8 +71,12 @@ public class BussinesManager implements ModelInterface {
     }
 
     @Override
-    public void saveCSV() {
+    public void saveFilePerson() {
+        List<Person> persons = personBehaviour.toList(personContainer);
 
+        for (Person p : persons) {
+            personStorage.append(p);
+        }
     }
 
     @Override
@@ -89,6 +100,12 @@ public class BussinesManager implements ModelInterface {
     }
 
     @Override
+    public void saveFileProduct() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'saveFileProduct'");
+    }
+
+    @Override
     public void addAccounting(Accounting accounting) {
         accountingContainer.add(accounting);
         accountingStorage.append(accounting);
@@ -106,6 +123,12 @@ public class BussinesManager implements ModelInterface {
                         ? a.getAmount()
                         : -a.getAmount())
                 .sum();
+    }
+
+    @Override
+    public void saveFileAccounting() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'saveFileAccounting'");
     }
 
 }

@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 import co.edu.uptc.enums.MovementType;
 import co.edu.uptc.interfaces.ModelInterface;
-import co.edu.uptc.model.entity.Accounting;
+import co.edu.uptc.model.entities.Accounting;
 import co.edu.uptc.model.validation.AccountingValidator;
 import co.edu.uptc.model.validation.ValidationResult;
 import co.edu.uptc.model.validation.rules.NotBlankRule;

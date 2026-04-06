@@ -1,7 +1,7 @@
 package co.edu.uptc.model.validation;
 
 import co.edu.uptc.interfaces.IValidator;
-import co.edu.uptc.model.entity.Product;
+import co.edu.uptc.model.entities.Product;
 import co.edu.uptc.model.validation.rules.*;
 
 public class ProductValidator implements IValidator<Product> {

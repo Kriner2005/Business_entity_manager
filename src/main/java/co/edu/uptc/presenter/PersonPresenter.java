@@ -5,7 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
 import co.edu.uptc.interfaces.ModelInterface;
-import co.edu.uptc.model.entity.Person;
+import co.edu.uptc.model.entities.Person;
 import co.edu.uptc.model.validation.PersonValidator;
 import co.edu.uptc.model.validation.ValidationResult;
 import co.edu.uptc.model.validation.rules.DateRule;
@@ -81,7 +81,7 @@ public class PersonPresenter implements IPersonPresenter {
 
     @Override
     public void exportCSV() {
-        model.saveCSV();
+        model.saveFilePerson();
         view.showAlert("Exportación CSV");
     }
 

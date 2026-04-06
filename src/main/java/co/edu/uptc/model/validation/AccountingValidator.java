@@ -1,7 +1,7 @@
 package co.edu.uptc.model.validation;
 
 import co.edu.uptc.interfaces.IValidator;
-import co.edu.uptc.model.entity.Accounting;
+import co.edu.uptc.model.entities.Accounting;
 import co.edu.uptc.model.validation.rules.*;
 
 public class AccountingValidator implements IValidator<Accounting> {

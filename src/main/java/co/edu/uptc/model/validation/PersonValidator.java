@@ -1,7 +1,7 @@
 package co.edu.uptc.model.validation;
 
 import co.edu.uptc.interfaces.IValidator;
-import co.edu.uptc.model.entity.Person;
+import co.edu.uptc.model.entities.Person;
 import co.edu.uptc.model.validation.rules.DateRule;
 import co.edu.uptc.model.validation.rules.NameLengthRule;
 

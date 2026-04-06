@@ -1,7 +1,7 @@
 package co.edu.uptc.presenter;
 
 import co.edu.uptc.interfaces.ModelInterface;
-import co.edu.uptc.model.entity.Product;
+import co.edu.uptc.model.entities.Product;
 import co.edu.uptc.model.validation.ProductValidator;
 import co.edu.uptc.model.validation.ValidationResult;
 import co.edu.uptc.model.validation.rules.NotBlankRule;

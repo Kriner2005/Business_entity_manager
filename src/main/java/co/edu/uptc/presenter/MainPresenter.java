@@ -1,5 +1,6 @@
 package co.edu.uptc.presenter;
 
+import co.edu.uptc.config.AppConfig;
 import co.edu.uptc.interfaces.ModelInterface;
 import co.edu.uptc.interfaces.PresenterInterface;
 import co.edu.uptc.interfaces.ViewInterface;
@@ -11,6 +12,11 @@ public class MainPresenter implements PresenterInterface<ViewInterface<?>> {
     private final PersonPresenter personPresenter = new PersonPresenter();
     private final ProductPresenter productPresenter = new ProductPresenter();
     private final AccountingPresenter accountingPresenter = new AccountingPresenter();
+    private final AppConfig config = AppConfig.getInstance();
+    
+    public MainPresenter() {
+        
+    }
 
     @Override
     public void setModel(ModelInterface model) {

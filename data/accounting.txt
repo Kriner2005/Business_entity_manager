@@ -1,2 +1,0 @@
-{"description":"Venta de licor","type":"INGRESO","amount":50000.0,"dateTime":"2026-04-05T16:25:00.2222697"}
-{"description":"Venta de licor 1","type":"INGRESO","amount":40000.0,"dateTime":"2026-04-05T16:25:21.624867"}

@@ -1,12 +1,19 @@
-package co.edu.uptc.model.entity;
+package co.edu.uptc.model.entities;
+
+import com.opencsv.bean.CsvBindByPosition;
 
 public class Product {
+    @CsvBindByPosition(position = 0)
     private int id;
+    @CsvBindByPosition(position = 1)
     private String description;
+    @CsvBindByPosition(position = 2)
     private String unit;
+    @CsvBindByPosition(position = 3)
     private double price;
 
-    
+    public Product() {
+    }
 
     public Product(int id, String description, String unit, double price) {
         this.id = id;

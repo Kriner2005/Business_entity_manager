@@ -6,7 +6,7 @@ import co.edu.uptc.model.BussinesManager;
 import co.edu.uptc.model.DoubleLinkedList;
 import co.edu.uptc.model.collectionsByBehaviour.Queue;
 import co.edu.uptc.model.collectionsByBehaviour.Stack;
-import co.edu.uptc.model.entity.Accounting;
+import co.edu.uptc.model.entities.Accounting;
 import co.edu.uptc.model.persistence.FileStorageService;
 import co.edu.uptc.model.persistence.serializer.JsonLSerializer;
 import co.edu.uptc.view.MainFrame;
