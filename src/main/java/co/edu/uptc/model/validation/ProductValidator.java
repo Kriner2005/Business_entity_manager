@@ -2,7 +2,8 @@ package co.edu.uptc.model.validation;
 
 import co.edu.uptc.interfaces.IValidator;
 import co.edu.uptc.model.entities.Product;
-import co.edu.uptc.model.validation.rules.*;
+import co.edu.uptc.model.validation.rules.NotBlankRule;
+import co.edu.uptc.model.validation.rules.PriceRule;
 
 public class ProductValidator implements IValidator<Product> {
 
@@ -20,16 +21,6 @@ public class ProductValidator implements IValidator<Product> {
         if (!desc.isValid())
             return desc;
 
-        ValidationResult price = priceRule.validate(product.getPrice());
-        if (!price.isValid())
-            return price;
-
-        return validateDescription(product.getDescription());
-    }
-
-    private ValidationResult validateDescription(String description) {
-        if (!description.equals(description.toUpperCase()))
-            return ValidationResult.fail("La descripción debe estar en mayúsculas");
-        return ValidationResult.ok();
+        return priceRule.validate(product.getPrice());
     }
 }

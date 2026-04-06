@@ -27,11 +27,14 @@ public class PersonPresenter implements IPersonPresenter {
     private int currentPage = 0;
 
     public PersonPresenter() {
+        AppConfig config = AppConfig.getInstance();
+
         this.validator = new PersonValidator(
-                new NameLengthRule("Nombre", 2, 10),
-                new NameLengthRule("Apellido", 2, 10),
+                new NameLengthRule("Nombre", config.getPersonNameMin(), config.getPersonNameMax()),
+                new NameLengthRule("Apellido", config.getPersonLastNameMin(), config.getPersonLastNameMax()),
                 new DateRule());
-        this.pageSize = AppConfig.getInstance().getPageSize();
+
+        this.pageSize = config.getPageSize();
     }
 
     @Override
@@ -122,8 +125,8 @@ public class PersonPresenter implements IPersonPresenter {
 
     private void showCurrentPage() {
         List<Person> all = model.getPersons();
-        int from  = currentPage * pageSize;
-        int to    = Math.min(from + pageSize, all.size());
+        int from = currentPage * pageSize;
+        int to = Math.min(from + pageSize, all.size());
         List<Person> page = all.subList(from, to);
 
         int totalPages = totalPages(all.size());
@@ -132,21 +135,24 @@ public class PersonPresenter implements IPersonPresenter {
     }
 
     private int totalPages(int totalElements) {
-        if (totalElements == 0) return 1;
+        if (totalElements == 0)
+            return 1;
         return (int) Math.ceil((double) totalElements / pageSize);
     }
 
     private char parseGender(String gender) {
-        if (gender == null) return 0;
+        if (gender == null)
+            return 0;
         return switch (gender.trim().toUpperCase()) {
             case "MASCULINO", "M" -> 'M';
-            case "FEMENINO", "F"  -> 'F';
+            case "FEMENINO", "F" -> 'F';
             default -> 0;
         };
     }
 
     private LocalDate parseDate(String raw) {
-        if (raw == null || raw.isBlank()) return null;
+        if (raw == null || raw.isBlank())
+            return null;
         try {
             return LocalDate.parse(raw.trim(), dateFormatter);
         } catch (DateTimeParseException e) {

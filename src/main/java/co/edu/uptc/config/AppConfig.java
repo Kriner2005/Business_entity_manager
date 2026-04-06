@@ -23,8 +23,8 @@ public class AppConfig {
     private IFileStorage<Accounting> turnStorage;
 
     // === DEFAULTS ===
-    private static final int    DEFAULT_PAGE_SIZE = 10;
-    private static final String DEFAULT_ALIGN     = "LEFT";
+    private static final int DEFAULT_PAGE_SIZE = 10;
+    private static final String DEFAULT_ALIGN = "LEFT";
 
     private AppConfig() {
         this.config = new ConfigLoader();
@@ -56,17 +56,24 @@ public class AppConfig {
 
     // === GETTERS STORAGES ===
 
-    public IFileStorage<Person> getPersonStorage() { return personStorage; }
+    public IFileStorage<Person> getPersonStorage() {
+        return personStorage;
+    }
 
-    public IFileStorage<Product> getProductStorage() { return productStorage; }
+    public IFileStorage<Product> getProductStorage() {
+        return productStorage;
+    }
 
-    public IFileStorage<Accounting> getTurnStorage() { return turnStorage; }
+    public IFileStorage<Accounting> getTurnStorage() {
+        return turnStorage;
+    }
 
     // === GETTER PAGINADO ===
 
     public int getPageSize() {
         String raw = config.get("page.size");
-        if (raw == null || raw.isBlank()) return DEFAULT_PAGE_SIZE;
+        if (raw == null || raw.isBlank())
+            return DEFAULT_PAGE_SIZE;
         try {
             int val = Integer.parseInt(raw.trim());
             return val > 0 ? val : DEFAULT_PAGE_SIZE;
@@ -81,11 +88,52 @@ public class AppConfig {
     // en DefaultTableCellRenderer.setHorizontalAlignment()
     public int getTableAlign() {
         String raw = config.get("table.align");
-        if (raw == null || raw.isBlank()) raw = DEFAULT_ALIGN;
+        if (raw == null || raw.isBlank())
+            raw = DEFAULT_ALIGN;
         return switch (raw.trim().toUpperCase()) {
             case "CENTER" -> SwingConstants.CENTER;
-            case "RIGHT"  -> SwingConstants.RIGHT;
-            default       -> SwingConstants.LEFT;
+            case "RIGHT" -> SwingConstants.RIGHT;
+            default -> SwingConstants.LEFT;
         };
+    }
+
+    // ── Longitudes de persona ──────────────────────────────────────────────
+
+    public int getPersonNameMin() {
+        return parseInt(config.get("person.name.min"), 2);
+    }
+
+    public int getPersonNameMax() {
+        return parseInt(config.get("person.name.max"), 30);
+    }
+
+    public int getPersonLastNameMin() {
+        return parseInt(config.get("person.lastname.min"), 2);
+    }
+
+    public int getPersonLastNameMax() {
+        return parseInt(config.get("person.lastname.max"), 30);
+    }
+
+    // ── Estilo descripción producto ────────────────────────────────────────
+
+    public String getProductDescriptionStyle() {
+        String raw = config.get("product.description.style");
+        if (raw == null || raw.isBlank())
+            return "UPPERCASE";
+        return raw.trim().toUpperCase();
+    }
+
+    // ── Helper privado ─────────────────────────────────────────────────────
+
+    private int parseInt(String raw, int defaultValue) {
+        if (raw == null || raw.isBlank())
+            return defaultValue;
+        try {
+            int val = Integer.parseInt(raw.trim());
+            return val > 0 ? val : defaultValue;
+        } catch (NumberFormatException e) {
+            return defaultValue;
+        }
     }
 }

@@ -23,10 +23,13 @@ public class ProductPresenter implements IProductPresenter {
     private int currentPage = 0;
 
     public ProductPresenter() {
+        AppConfig config = AppConfig.getInstance();
+
         this.validator = new ProductValidator(
                 new NotBlankRule("Descripción"),
                 new PriceRule(10_000_000));
-        this.pageSize = AppConfig.getInstance().getPageSize();
+
+        this.pageSize = config.getPageSize();
     }
 
     @Override
@@ -41,8 +44,10 @@ public class ProductPresenter implements IProductPresenter {
 
     @Override
     public void addProduct(String description, String unit, String price) {
-        double parsedPrice = parsePrice(price);
+        // Aplica el estilo según config — la View manda el texto crudo
+        String formattedDescription = applyDescriptionStyle(description.trim());
 
+        double parsedPrice = parsePrice(price);
         if (parsedPrice < 0) {
             view.showError("Precio inválido. Ingrese un número mayor a cero");
             return;
@@ -50,7 +55,7 @@ public class ProductPresenter implements IProductPresenter {
 
         Product product = new Product(
                 model.createProductId(),
-                description.trim(),
+                formattedDescription,
                 unit.trim(),
                 parsedPrice);
 
@@ -62,6 +67,29 @@ public class ProductPresenter implements IProductPresenter {
 
         model.addProduct(product);
         view.showMessage("Producto agregado (sin guardar — use Exportar CSV)");
+    }
+
+    private String applyDescriptionStyle(String raw) {
+        if (raw == null || raw.isBlank())
+            return raw;
+        String style = AppConfig.getInstance().getProductDescriptionStyle();
+        return switch (style) {
+            case "TITLECASE" -> toTitleCase(raw);
+            default -> raw.toUpperCase(); // UPPERCASE es el default
+        };
+    }
+
+    private String toTitleCase(String raw) {
+        String[] words = raw.toLowerCase().split("\\s+");
+        StringBuilder sb = new StringBuilder();
+        for (String word : words) {
+            if (!word.isEmpty()) {
+                sb.append(Character.toUpperCase(word.charAt(0)))
+                        .append(word.substring(1))
+                        .append(" ");
+            }
+        }
+        return sb.toString().trim();
     }
 
     @Override
@@ -117,8 +145,8 @@ public class ProductPresenter implements IProductPresenter {
 
     private void showCurrentPage() {
         List<Product> all = model.getProducts();
-        int from  = currentPage * pageSize;
-        int to    = Math.min(from + pageSize, all.size());
+        int from = currentPage * pageSize;
+        int to = Math.min(from + pageSize, all.size());
         List<Product> page = all.subList(from, to);
 
         int totalPages = totalPages(all.size());
@@ -127,12 +155,14 @@ public class ProductPresenter implements IProductPresenter {
     }
 
     private int totalPages(int totalElements) {
-        if (totalElements == 0) return 1;
+        if (totalElements == 0)
+            return 1;
         return (int) Math.ceil((double) totalElements / pageSize);
     }
 
     private double parsePrice(String raw) {
-        if (raw == null || raw.isBlank()) return -1.0;
+        if (raw == null || raw.isBlank())
+            return -1.0;
         try {
             return Double.parseDouble(raw.trim().replace(",", "."));
         } catch (NumberFormatException e) {

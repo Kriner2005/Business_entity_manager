@@ -193,7 +193,7 @@ public class ProductPanel extends JPanel implements IProductView, IColleague {
 
     private void onAdd() {
         if (presenter != null)
-            presenter.addProduct(description.getText().toUpperCase().trim(), unit.getSelectedItem().toString(),
+            presenter.addProduct(description.getText().trim(), unit.getSelectedItem().toString(),
                     price.getText());
     }
 
