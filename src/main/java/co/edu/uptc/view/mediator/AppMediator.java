@@ -2,6 +2,7 @@ package co.edu.uptc.view.mediator;
 
 import javax.swing.JOptionPane;
 
+import co.edu.uptc.config.MessageManager;
 import co.edu.uptc.view.MainFrame;
 import co.edu.uptc.view.interfaces.IColleague;
 import co.edu.uptc.view.interfaces.IMediator;
@@ -55,8 +56,8 @@ public class AppMediator implements IMediator {
     private void onExit() {
         int confirm = JOptionPane.showConfirmDialog(
                 frame,
-                "¿Desea cerrar la aplicación?",
-                "Confirmar salida",
+                MessageManager.msg("dialog.exit.msg"),
+                MessageManager.msg("dialog.exit.title"),
                 JOptionPane.YES_NO_OPTION);
         if (confirm == JOptionPane.YES_OPTION) {
             System.exit(0);

@@ -6,6 +6,7 @@ import java.time.format.DateTimeParseException;
 import java.util.List;
 
 import co.edu.uptc.config.AppConfig;
+import co.edu.uptc.config.MessageManager;
 import co.edu.uptc.interfaces.ModelInterface;
 import co.edu.uptc.model.entities.Person;
 import co.edu.uptc.model.validation.PersonValidator;
@@ -30,8 +31,8 @@ public class PersonPresenter implements IPersonPresenter {
         AppConfig config = AppConfig.getInstance();
 
         this.validator = new PersonValidator(
-                new NameLengthRule("Nombre", config.getPersonNameMin(), config.getPersonNameMax()),
-                new NameLengthRule("Apellido", config.getPersonLastNameMin(), config.getPersonLastNameMax()),
+                new NameLengthRule("name", config.getPersonNameMin(), config.getPersonNameMax()),
+                new NameLengthRule("lastname", config.getPersonLastNameMin(), config.getPersonLastNameMax()),
                 new DateRule());
 
         this.pageSize = config.getPageSize();
@@ -51,13 +52,13 @@ public class PersonPresenter implements IPersonPresenter {
     public void addPerson(String name, String lastName, String gender, String birthDate) {
         char g = parseGender(gender);
         if (g == 0) {
-            view.showError("Género inválido. Use Masculino o Femenino");
+            view.showError(MessageManager.msg("error.gender.invalid"));
             return;
         }
 
         LocalDate date = parseDate(birthDate);
         if (date == null) {
-            view.showError("Fecha inválida. Formato esperado: yyyy-MM-dd");
+            view.showError(MessageManager.msg("error.date.invalid"));
             return;
         }
 
@@ -70,15 +71,15 @@ public class PersonPresenter implements IPersonPresenter {
         }
 
         model.addPerson(person);
-        view.showMessage("Persona agregada (sin guardar — use Exportar CSV)");
-        view.clearForm();  
+        view.showMessage(MessageManager.msg("person.add.success"));
+        view.clearForm();
     }
 
     @Override
     public void removePerson() {
         Person removed = model.removePerson();
         if (removed == null) {
-            view.showError("La cola de personas está vacía");
+            view.showError(MessageManager.msg("person.remove.empty"));
             return;
         }
 
@@ -90,7 +91,7 @@ public class PersonPresenter implements IPersonPresenter {
         }
 
         view.showRemovedPerson(removed);
-        view.showMessage("Persona retirada (sin guardar — use Exportar CSV)");
+        view.showMessage(MessageManager.msg("person.remove.success"));
     }
 
     @Override
@@ -119,7 +120,7 @@ public class PersonPresenter implements IPersonPresenter {
     @Override
     public void exportCSV() {
         model.saveFilePerson();
-        view.showMessage("CSV exportado correctamente");
+        view.showMessage(MessageManager.msg("person.export.success"));
     }
 
     // ── helpers ───────────────────────────────────────────────────────────

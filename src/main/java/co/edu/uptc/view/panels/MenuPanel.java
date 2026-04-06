@@ -9,6 +9,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
+import co.edu.uptc.config.MessageManager;
 import co.edu.uptc.view.interfaces.IColleague;
 import co.edu.uptc.view.interfaces.IMediator;
 
@@ -45,17 +46,17 @@ public class MenuPanel extends JPanel implements IColleague {
     }
 
     private void initComponents() {
-        title = new JLabel("Sistema de Gestión - UPTC", SwingConstants.CENTER);
+        title = new JLabel(MessageManager.msg("menu.main.title"), SwingConstants.CENTER);
 
-        personsLabel = new JLabel("Gestión de personas", SwingConstants.CENTER);
-        productsLabel = new JLabel("Gestión de productos", SwingConstants.CENTER);
-        accountingLabel = new JLabel("Gestión de contabilidad", SwingConstants.CENTER);
-        exitLabel = new JLabel("Cerrar aplicación", SwingConstants.CENTER);
+        personsLabel = new JLabel(MessageManager.msg("menu.desc.persons"), SwingConstants.CENTER);
+        productsLabel = new JLabel(MessageManager.msg("menu.desc.products"), SwingConstants.CENTER);
+        accountingLabel = new JLabel(MessageManager.msg("menu.desc.accounting"), SwingConstants.CENTER);
+        exitLabel = new JLabel(MessageManager.msg("menu.desc.exit"), SwingConstants.CENTER);
 
-        persons = new JButton("Personas");
-        products = new JButton("Productos");
-        accounting = new JButton("Contabilidad");
-        exit = new JButton("Salir");
+        persons = new JButton(MessageManager.msg("menu.persons"));
+        products = new JButton(MessageManager.msg("menu.products"));
+        accounting = new JButton(MessageManager.msg("menu.accounting"));
+        exit = new JButton(MessageManager.msg("menu.exit"));
 
         bindEvents();
     }

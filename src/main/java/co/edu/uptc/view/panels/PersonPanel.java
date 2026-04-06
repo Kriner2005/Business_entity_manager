@@ -20,6 +20,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 import co.edu.uptc.config.AppConfig;
+import co.edu.uptc.config.MessageManager;
 import co.edu.uptc.model.entities.Person;
 import co.edu.uptc.presenter.interfaces.IPersonPresenter;
 import co.edu.uptc.view.interfaces.IColleague;
@@ -72,42 +73,50 @@ public class PersonPanel extends JPanel implements IPersonView, IColleague {
 
         initComponents();
 
-        add(buildNorth(),  BorderLayout.NORTH);
+        add(buildNorth(), BorderLayout.NORTH);
         add(buildCenter(), BorderLayout.CENTER);
-        add(buildSouth(),  BorderLayout.SOUTH);
+        add(buildSouth(), BorderLayout.SOUTH);
 
         bindEvents();
         applyTableAlignment();
     }
 
     private void initComponents() {
-        title       = new JLabel("Gestión de Personas", SwingConstants.CENTER);
-        nameTxt     = new JLabel("Nombres:");
-        lastNameTxt = new JLabel("Apellidos:");
-        dateTxt     = new JLabel("Fecha nacimiento:");
-        genderTxt   = new JLabel("Género:");
+        title = new JLabel(MessageManager.msg("person.panel.title"), SwingConstants.CENTER);
+        nameTxt = new JLabel(MessageManager.msg("person.field.name"));
+        lastNameTxt = new JLabel(MessageManager.msg("person.field.lastname"));
+        dateTxt = new JLabel(MessageManager.msg("person.field.birthdate"));
+        genderTxt = new JLabel(MessageManager.msg("person.field.gender"));
         statusLabel = new JLabel(" ");
-        pageLabel   = new JLabel("Página 1 de 1", SwingConstants.CENTER);
+        pageLabel = new JLabel("Página 1 de 1", SwingConstants.CENTER);
 
-        name      = new JTextField(15);
-        lastName  = new JTextField(15);
+        name = new JTextField(15);
+        lastName = new JTextField(15);
         birthDate = new JTextField("yyyy-MM-dd", 10);
         genderBox = new JComboBox<>(new DefaultComboBoxModel<>(new String[] { "Masculino", "Femenino" }));
 
-        add    = new JButton("Agregar");
-        remove = new JButton("Retirar");
-        list   = new JButton("Listar");
-        persis = new JButton("Exportar CSV");
-        back   = new JButton("← Volver");
+        add = new JButton(MessageManager.msg("action.add"));
+        remove = new JButton(MessageManager.msg("action.remove"));
+        list = new JButton(MessageManager.msg("action.list"));
+        persis = new JButton(MessageManager.msg("action.export"));
+        back = new JButton(MessageManager.msg("action.back"));
 
-        prevBtn = new JButton("◀ Anterior");
-        nextBtn = new JButton("Siguiente ▶");
+        prevBtn = new JButton(MessageManager.msg("action.prev"));
+        nextBtn = new JButton(MessageManager.msg("action.next"));
 
         tableModel = new DefaultTableModel(
-                new String[] { "ID", "Nombres", "Apellidos", "Género", "Edad" }, 0) {
-            @Override public boolean isCellEditable(int r, int c) { return false; }
+                new String[] { MessageManager.msg("person.table.id"),
+                        MessageManager.msg("person.table.name"),
+                        MessageManager.msg("person.table.lastname"),
+                        MessageManager.msg("person.table.gender"),
+                        MessageManager.msg("person.table.age") },
+                0) {
+            @Override
+            public boolean isCellEditable(int r, int c) {
+                return false;
+            }
         };
-        table  = new JTable(tableModel);
+        table = new JTable(tableModel);
         scroll = new JScrollPane(table);
     }
 
@@ -122,12 +131,14 @@ public class PersonPanel extends JPanel implements IPersonView, IColleague {
         }
     }
 
-    private JLabel buildNorth() { return title; }
+    private JLabel buildNorth() {
+        return title;
+    }
 
     private JPanel buildCenter() {
         JPanel center = new JPanel(new BorderLayout(10, 10));
-        center.add(buildForm(),   BorderLayout.NORTH);
-        center.add(scroll,        BorderLayout.CENTER);
+        center.add(buildForm(), BorderLayout.NORTH);
+        center.add(scroll, BorderLayout.CENTER);
         center.add(buildPaging(), BorderLayout.SOUTH);
         return center;
     }
@@ -136,19 +147,23 @@ public class PersonPanel extends JPanel implements IPersonView, IColleague {
         JPanel form = new JPanel(new GridLayout(2, 4, 8, 8));
         form.setBorder(BorderFactory.createTitledBorder("Datos"));
 
-        form.add(nameTxt);     form.add(name);
-        form.add(lastNameTxt); form.add(lastName);
-        form.add(genderTxt);   form.add(genderBox);
-        form.add(dateTxt);     form.add(birthDate);
+        form.add(nameTxt);
+        form.add(name);
+        form.add(lastNameTxt);
+        form.add(lastName);
+        form.add(genderTxt);
+        form.add(genderBox);
+        form.add(dateTxt);
+        form.add(birthDate);
 
         return form;
     }
 
     private JPanel buildPaging() {
         JPanel paging = new JPanel(new BorderLayout(8, 0));
-        paging.add(prevBtn,   BorderLayout.WEST);
+        paging.add(prevBtn, BorderLayout.WEST);
         paging.add(pageLabel, BorderLayout.CENTER);
-        paging.add(nextBtn,   BorderLayout.EAST);
+        paging.add(nextBtn, BorderLayout.EAST);
         return paging;
     }
 
@@ -162,26 +177,48 @@ public class PersonPanel extends JPanel implements IPersonView, IColleague {
         buttons.add(persis);
         buttons.add(back);
 
-        south.add(buttons,     BorderLayout.WEST);
+        south.add(buttons, BorderLayout.WEST);
         south.add(statusLabel, BorderLayout.CENTER);
         return south;
     }
 
     private void bindEvents() {
-        add.addActionListener(e    -> onAdd());
+        add.addActionListener(e -> onAdd());
         remove.addActionListener(e -> onRemove());
-        list.addActionListener(e   -> onList());
+        list.addActionListener(e -> onList());
         persis.addActionListener(e -> onExport());
-        back.addActionListener(e   -> mediator.notify(this, "back"));
+        back.addActionListener(e -> mediator.notify(this, "back"));
 
-        prevBtn.addActionListener(e -> { if (presenter != null) presenter.prevPage(); });
-        nextBtn.addActionListener(e -> { if (presenter != null) presenter.nextPage(); });
+        prevBtn.addActionListener(e -> {
+            if (presenter != null)
+                presenter.prevPage();
+        });
+        nextBtn.addActionListener(e -> {
+            if (presenter != null)
+                presenter.nextPage();
+        });
     }
 
-    private void onAdd()    { if (presenter != null) presenter.addPerson(name.getText(), lastName.getText(), genderBox.getSelectedItem().toString(), birthDate.getText()); }
-    private void onRemove() { if (presenter != null) presenter.removePerson(); }
-    private void onList()   { if (presenter != null) presenter.listPersons(); }
-    private void onExport() { if (presenter != null) presenter.exportCSV(); }
+    private void onAdd() {
+        if (presenter != null)
+            presenter.addPerson(name.getText(), lastName.getText(), genderBox.getSelectedItem().toString(),
+                    birthDate.getText());
+    }
+
+    private void onRemove() {
+        if (presenter != null)
+            presenter.removePerson();
+    }
+
+    private void onList() {
+        if (presenter != null)
+            presenter.listPersons();
+    }
+
+    private void onExport() {
+        if (presenter != null)
+            presenter.exportCSV();
+    }
 
     // ── IPersonView ────────────────────────────────────────────────────────
 
@@ -197,7 +234,7 @@ public class PersonPanel extends JPanel implements IPersonView, IColleague {
                     java.time.LocalDate.now().getYear() - p.getBirthDate().getYear()
             });
         }
-        pageLabel.setText("Página " + currentPage + " de " + totalPages);
+        pageLabel.setText(MessageManager.msg("paging.label", currentPage, totalPages));
         prevBtn.setEnabled(currentPage > 1);
         nextBtn.setEnabled(currentPage < totalPages);
     }
@@ -205,22 +242,29 @@ public class PersonPanel extends JPanel implements IPersonView, IColleague {
     @Override
     public void showRemovedPerson(Person person) {
         JOptionPane.showMessageDialog(this,
-                "Persona retirada: " + person.getName() + " " + person.getLastName(),
-                "Retirado", JOptionPane.INFORMATION_MESSAGE);
+                MessageManager.msg("person.removed.msg", person.getName(), person.getLastName()),
+                MessageManager.msg("person.removed.title"),
+                JOptionPane.INFORMATION_MESSAGE);
     }
 
     @Override
-public void clearForm() {
-    name.setText("");
-    lastName.setText("");
-    birthDate.setText("yyyy-MM-dd");
-    genderBox.setSelectedIndex(0);
-}
+    public void clearForm() {
+        name.setText("");
+        lastName.setText("");
+        birthDate.setText("yyyy-MM-dd");
+        genderBox.setSelectedIndex(0);
+    }
 
     // ── ViewInterface ──────────────────────────────────────────────────────
 
-    @Override public void setPresenter(IPersonPresenter presenter) { this.presenter = presenter; }
-    @Override public void start() {}
+    @Override
+    public void setPresenter(IPersonPresenter presenter) {
+        this.presenter = presenter;
+    }
+
+    @Override
+    public void start() {
+    }
 
     @Override
     public void showMessage(String msg) {
@@ -241,5 +285,8 @@ public void clearForm() {
 
     // ── IColleague ─────────────────────────────────────────────────────────
 
-    @Override public void setMediator(IMediator mediator) { this.mediator = mediator; }
+    @Override
+    public void setMediator(IMediator mediator) {
+        this.mediator = mediator;
+    }
 }

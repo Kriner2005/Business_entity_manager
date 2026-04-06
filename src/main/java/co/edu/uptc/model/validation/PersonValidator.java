@@ -1,5 +1,6 @@
 package co.edu.uptc.model.validation;
 
+import co.edu.uptc.config.MessageManager;
 import co.edu.uptc.interfaces.IValidator;
 import co.edu.uptc.model.entities.Person;
 import co.edu.uptc.model.validation.rules.DateRule;
@@ -38,7 +39,7 @@ public class PersonValidator implements IValidator<Person> {
 
     private ValidationResult validateGender(char gender) {
         if (gender != 'M' && gender != 'F')
-            return ValidationResult.fail("Género debe ser M o F");
+            return ValidationResult.fail(MessageManager.msg("validation.gender.invalid"));
         return ValidationResult.ok();
     }
 

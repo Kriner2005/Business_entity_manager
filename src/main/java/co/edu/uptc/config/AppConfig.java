@@ -168,4 +168,8 @@ public class AppConfig {
                     "Valor inválido para '" + key + "': '" + raw + "' no es un número entero");
         }
     }
+
+    public String getAppLanguage() {
+    return require("app.language");
+}
 }

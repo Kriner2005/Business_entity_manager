@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import co.edu.uptc.config.AppConfig;
+import co.edu.uptc.config.MessageManager;
 import co.edu.uptc.enums.MovementType;
 import co.edu.uptc.interfaces.ModelInterface;
 import co.edu.uptc.model.entities.Accounting;
@@ -24,7 +25,7 @@ public class AccountingPresenter implements IAccountingPresenter {
     private int currentPage = 0;
 
     public AccountingPresenter() {
-        validator = new AccountingValidator(new NotBlankRule("Descripción"));
+        validator = new AccountingValidator(new NotBlankRule("Description"));
         this.pageSize = AppConfig.getInstance().getPageSize();
     }
 
@@ -42,13 +43,13 @@ public class AccountingPresenter implements IAccountingPresenter {
     public void addAccounting(String description, String movementType, String value) {
         MovementType type = parseMovementType(movementType);
         if (type == null) {
-            view.showError("Tipo de movimiento inválido.");
+            view.showError(MessageManager.msg("error.movement.invalid"));
             return;
         }
 
         double parsedValue = parseAmount(value);
         if (parsedValue < 0) {
-            view.showError("Valor inválido. Ingrese un número mayor a cero.");
+            view.showError(MessageManager.msg("error.amount.invalid"));
             return;
         }
 
@@ -65,7 +66,7 @@ public class AccountingPresenter implements IAccountingPresenter {
         }
 
         model.addAccounting(accounting);
-        view.showMessage("Movimiento registrado correctamente.");
+view.showMessage(MessageManager.msg("accounting.add.success"));
         view.showTotalBalance(model.getTotalBalance());
         view.clearForm();  
     }

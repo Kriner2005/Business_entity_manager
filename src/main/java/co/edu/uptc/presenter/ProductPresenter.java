@@ -3,6 +3,7 @@ package co.edu.uptc.presenter;
 import java.util.List;
 
 import co.edu.uptc.config.AppConfig;
+import co.edu.uptc.config.MessageManager;
 import co.edu.uptc.interfaces.ModelInterface;
 import co.edu.uptc.model.entities.Product;
 import co.edu.uptc.model.validation.ProductValidator;
@@ -26,7 +27,7 @@ public class ProductPresenter implements IProductPresenter {
         AppConfig config = AppConfig.getInstance();
 
         this.validator = new ProductValidator(
-                new NotBlankRule("Descripción"),
+                new NotBlankRule("Description"),
                 new PriceRule(10_000_000));
 
         this.pageSize = config.getPageSize();
@@ -49,7 +50,7 @@ public class ProductPresenter implements IProductPresenter {
 
         double parsedPrice = parsePrice(price);
         if (parsedPrice < 0) {
-            view.showError("Precio inválido. Ingrese un número mayor a cero");
+            view.showError(MessageManager.msg("error.price.invalid"));
             return;
         }
 
@@ -66,8 +67,8 @@ public class ProductPresenter implements IProductPresenter {
         }
 
         model.addProduct(product);
-        view.showMessage("Producto agregado (sin guardar — use Exportar CSV)");
-        view.clearForm();  
+        view.showMessage(MessageManager.msg("product.add.success"));
+        view.clearForm();
     }
 
     private String applyDescriptionStyle(String raw) {
@@ -98,7 +99,7 @@ public class ProductPresenter implements IProductPresenter {
         Product removed = model.removeProduct();
 
         if (removed == null) {
-            view.showError("No hay productos en la lista");
+            view.showError(MessageManager.msg("product.remove.empty"));
             return;
         }
 
@@ -110,7 +111,7 @@ public class ProductPresenter implements IProductPresenter {
         }
 
         view.showRemovedProduct(removed);
-        view.showMessage("Producto retirado (sin guardar — use Exportar CSV)");
+        view.showMessage(MessageManager.msg("product.remove.success"));
     }
 
     @Override
@@ -139,7 +140,7 @@ public class ProductPresenter implements IProductPresenter {
     @Override
     public void exportCSV() {
         model.saveFileProduct();
-        view.showMessage("CSV exportado correctamente");
+        view.showMessage(MessageManager.msg("product.export.success"));
     }
 
     // ── helpers ───────────────────────────────────────────────────────────
