@@ -1,5 +1,7 @@
 package co.edu.uptc.config;
 
+import javax.swing.SwingConstants;
+
 import co.edu.uptc.interfaces.IFileStorage;
 import co.edu.uptc.model.persistence.FileStorageService;
 import co.edu.uptc.model.persistence.serializer.CsvSerializer;
@@ -20,8 +22,9 @@ public class AppConfig {
     private IFileStorage<Product> productStorage;
     private IFileStorage<Accounting> turnStorage;
 
-    // === PAGINADO ===
-    private static final int DEFAULT_PAGE_SIZE = 10;
+    // === DEFAULTS ===
+    private static final int    DEFAULT_PAGE_SIZE = 10;
+    private static final String DEFAULT_ALIGN     = "LEFT";
 
     private AppConfig() {
         this.config = new ConfigLoader();
@@ -53,29 +56,36 @@ public class AppConfig {
 
     // === GETTERS STORAGES ===
 
-    public IFileStorage<Person> getPersonStorage() {
-        return personStorage;
-    }
+    public IFileStorage<Person> getPersonStorage() { return personStorage; }
 
-    public IFileStorage<Product> getProductStorage() {
-        return productStorage;
-    }
+    public IFileStorage<Product> getProductStorage() { return productStorage; }
 
-    public IFileStorage<Accounting> getTurnStorage() {
-        return turnStorage;
-    }
+    public IFileStorage<Accounting> getTurnStorage() { return turnStorage; }
 
     // === GETTER PAGINADO ===
 
     public int getPageSize() {
         String raw = config.get("page.size");
-        if (raw == null || raw.isBlank())
-            return DEFAULT_PAGE_SIZE;
+        if (raw == null || raw.isBlank()) return DEFAULT_PAGE_SIZE;
         try {
             int val = Integer.parseInt(raw.trim());
             return val > 0 ? val : DEFAULT_PAGE_SIZE;
         } catch (NumberFormatException e) {
             return DEFAULT_PAGE_SIZE;
         }
+    }
+
+    // === GETTER ALINEACIÓN ===
+
+    // Devuelve la constante SwingConstants lista para usar directamente
+    // en DefaultTableCellRenderer.setHorizontalAlignment()
+    public int getTableAlign() {
+        String raw = config.get("table.align");
+        if (raw == null || raw.isBlank()) raw = DEFAULT_ALIGN;
+        return switch (raw.trim().toUpperCase()) {
+            case "CENTER" -> SwingConstants.CENTER;
+            case "RIGHT"  -> SwingConstants.RIGHT;
+            default       -> SwingConstants.LEFT;
+        };
     }
 }

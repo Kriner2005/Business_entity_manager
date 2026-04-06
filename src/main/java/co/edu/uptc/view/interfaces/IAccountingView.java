@@ -7,6 +7,6 @@ import co.edu.uptc.model.entities.Accounting;
 import co.edu.uptc.presenter.interfaces.IAccountingPresenter;
 
 public interface IAccountingView extends ViewInterface<IAccountingPresenter> {
-    void showAccountingList(List<Accounting> accountings);
+    void showAccountingList(List<Accounting> accountings, int currentPage, int totalPages);
     void showTotalBalance(double total);
 }

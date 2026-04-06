@@ -16,8 +16,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
+import co.edu.uptc.config.AppConfig;
 import co.edu.uptc.model.entities.Product;
 import co.edu.uptc.presenter.interfaces.IProductPresenter;
 import co.edu.uptc.view.interfaces.IColleague;
@@ -68,50 +70,67 @@ public class ProductPanel extends JPanel implements IProductView, IColleague {
 
         initComponents();
 
-        add(buildNorth(),  BorderLayout.NORTH);
+        add(buildNorth(), BorderLayout.NORTH);
         add(buildCenter(), BorderLayout.CENTER);
-        add(buildSouth(),  BorderLayout.SOUTH);
+        add(buildSouth(), BorderLayout.SOUTH);
 
         bindEvents();
+        applyTableAlignment();
     }
 
     private void initComponents() {
-        title          = new JLabel("Gestión de Productos", SwingConstants.CENTER);
+        title = new JLabel("Gestión de Productos", SwingConstants.CENTER);
         descriptionTxt = new JLabel("Descripción:");
-        unitTxt        = new JLabel("Unidad:");
-        priceTxt       = new JLabel("Precio:");
-        statusLabel    = new JLabel(" ");
-        pageLabel      = new JLabel("Página 1 de 1", SwingConstants.CENTER);
+        unitTxt = new JLabel("Unidad:");
+        priceTxt = new JLabel("Precio:");
+        statusLabel = new JLabel(" ");
+        pageLabel = new JLabel("Página 1 de 1", SwingConstants.CENTER);
 
         description = new JTextField(20);
         unit = new JComboBox<>(new DefaultComboBoxModel<>(new String[] {
-            "KILO", "LIBRA", "BULTO", "TONELADA", "LITRO", "UNIDAD", "OTRO"
+                "KILO", "LIBRA", "BULTO", "TONELADA", "LITRO", "UNIDAD", "OTRO"
         }));
         price = new JTextField(10);
 
-        add    = new JButton("Agregar");
+        add = new JButton("Agregar");
         remove = new JButton("Retirar");
-        list   = new JButton("Listar");
+        list = new JButton("Listar");
         export = new JButton("Exportar CSV");
-        back   = new JButton("← Volver");
+        back = new JButton("← Volver");
 
         prevBtn = new JButton("◀ Anterior");
         nextBtn = new JButton("Siguiente ▶");
 
         tableModel = new DefaultTableModel(
                 new String[] { "ID", "Descripción", "Unidad", "Precio" }, 0) {
-            @Override public boolean isCellEditable(int r, int c) { return false; }
+            @Override
+            public boolean isCellEditable(int r, int c) {
+                return false;
+            }
         };
-        table  = new JTable(tableModel);
+        table = new JTable(tableModel);
         scroll = new JScrollPane(table);
     }
 
-    private JLabel buildNorth() { return title; }
+    // Aplica la alineación leída del config a todas las columnas de la tabla
+    private void applyTableAlignment() {
+        int align = AppConfig.getInstance().getTableAlign();
+        DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
+        renderer.setHorizontalAlignment(align);
+
+        for (int i = 0; i < table.getColumnCount(); i++) {
+            table.getColumnModel().getColumn(i).setCellRenderer(renderer);
+        }
+    }
+
+    private JLabel buildNorth() {
+        return title;
+    }
 
     private JPanel buildCenter() {
         JPanel center = new JPanel(new BorderLayout(10, 10));
-        center.add(buildForm(),   BorderLayout.NORTH);
-        center.add(scroll,        BorderLayout.CENTER);
+        center.add(buildForm(), BorderLayout.NORTH);
+        center.add(scroll, BorderLayout.CENTER);
         center.add(buildPaging(), BorderLayout.SOUTH);
         return center;
     }
@@ -120,20 +139,23 @@ public class ProductPanel extends JPanel implements IProductView, IColleague {
         JPanel form = new JPanel(new GridLayout(2, 4, 8, 8));
         form.setBorder(BorderFactory.createTitledBorder("Datos"));
 
-        form.add(descriptionTxt); form.add(description);
-        form.add(unitTxt);        form.add(unit);
-        form.add(priceTxt);       form.add(price);
-        form.add(new JLabel());   form.add(new JLabel());
+        form.add(descriptionTxt);
+        form.add(description);
+        form.add(unitTxt);
+        form.add(unit);
+        form.add(priceTxt);
+        form.add(price);
+        form.add(new JLabel());
+        form.add(new JLabel());
 
         return form;
     }
 
-    // Barra de paginado: [◀ Anterior]  Página 1 de 3  [Siguiente ▶]
     private JPanel buildPaging() {
         JPanel paging = new JPanel(new BorderLayout(8, 0));
-        paging.add(prevBtn,   BorderLayout.WEST);
+        paging.add(prevBtn, BorderLayout.WEST);
         paging.add(pageLabel, BorderLayout.CENTER);
-        paging.add(nextBtn,   BorderLayout.EAST);
+        paging.add(nextBtn, BorderLayout.EAST);
         return paging;
     }
 
@@ -147,26 +169,48 @@ public class ProductPanel extends JPanel implements IProductView, IColleague {
         buttons.add(export);
         buttons.add(back);
 
-        south.add(buttons,     BorderLayout.WEST);
+        south.add(buttons, BorderLayout.WEST);
         south.add(statusLabel, BorderLayout.CENTER);
         return south;
     }
 
     private void bindEvents() {
-        add.addActionListener(e    -> onAdd());
+        add.addActionListener(e -> onAdd());
         remove.addActionListener(e -> onRemove());
-        list.addActionListener(e   -> onList());
+        list.addActionListener(e -> onList());
         export.addActionListener(e -> onExport());
-        back.addActionListener(e   -> mediator.notify(this, "back"));
+        back.addActionListener(e -> mediator.notify(this, "back"));
 
-        prevBtn.addActionListener(e -> { if (presenter != null) presenter.prevPage(); });
-        nextBtn.addActionListener(e -> { if (presenter != null) presenter.nextPage(); });
+        prevBtn.addActionListener(e -> {
+            if (presenter != null)
+                presenter.prevPage();
+        });
+        nextBtn.addActionListener(e -> {
+            if (presenter != null)
+                presenter.nextPage();
+        });
     }
 
-    private void onAdd()    { if (presenter != null) presenter.addProduct(description.getText().toUpperCase().trim(), unit.getSelectedItem().toString(), price.getText()); }
-    private void onRemove() { if (presenter != null) presenter.removeProduct(); }
-    private void onList()   { if (presenter != null) presenter.listProducts(); }
-    private void onExport() { if (presenter != null) presenter.exportCSV(); }
+    private void onAdd() {
+        if (presenter != null)
+            presenter.addProduct(description.getText().toUpperCase().trim(), unit.getSelectedItem().toString(),
+                    price.getText());
+    }
+
+    private void onRemove() {
+        if (presenter != null)
+            presenter.removeProduct();
+    }
+
+    private void onList() {
+        if (presenter != null)
+            presenter.listProducts();
+    }
+
+    private void onExport() {
+        if (presenter != null)
+            presenter.exportCSV();
+    }
 
     // ── IProductView ───────────────────────────────────────────────────────
 
@@ -182,7 +226,6 @@ public class ProductPanel extends JPanel implements IProductView, IColleague {
             });
         }
         pageLabel.setText("Página " + currentPage + " de " + totalPages);
-
         prevBtn.setEnabled(currentPage > 1);
         nextBtn.setEnabled(currentPage < totalPages);
     }
@@ -191,15 +234,21 @@ public class ProductPanel extends JPanel implements IProductView, IColleague {
     public void showRemovedProduct(Product product) {
         JOptionPane.showMessageDialog(this,
                 "Producto retirado: " + product.getDescription()
-                + " | " + product.getUnit()
-                + " | $" + String.format("%,.2f", product.getPrice()),
+                        + " | " + product.getUnit()
+                        + " | $" + String.format("%,.2f", product.getPrice()),
                 "Retirado", JOptionPane.INFORMATION_MESSAGE);
     }
 
     // ── ViewInterface ──────────────────────────────────────────────────────
 
-    @Override public void setPresenter(IProductPresenter presenter) { this.presenter = presenter; }
-    @Override public void start() {}
+    @Override
+    public void setPresenter(IProductPresenter presenter) {
+        this.presenter = presenter;
+    }
+
+    @Override
+    public void start() {
+    }
 
     @Override
     public void showMessage(String msg) {
@@ -220,5 +269,8 @@ public class ProductPanel extends JPanel implements IProductView, IColleague {
 
     // ── IColleague ─────────────────────────────────────────────────────────
 
-    @Override public void setMediator(IMediator mediator) { this.mediator = mediator; }
+    @Override
+    public void setMediator(IMediator mediator) {
+        this.mediator = mediator;
+    }
 }

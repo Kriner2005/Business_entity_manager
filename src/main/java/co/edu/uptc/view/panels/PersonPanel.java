@@ -16,8 +16,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
+import co.edu.uptc.config.AppConfig;
 import co.edu.uptc.model.entities.Person;
 import co.edu.uptc.presenter.interfaces.IPersonPresenter;
 import co.edu.uptc.view.interfaces.IColleague;
@@ -42,7 +44,7 @@ public class PersonPanel extends JPanel implements IPersonView, IColleague {
     private JLabel dateTxt;
     private JLabel genderTxt;
     private JLabel statusLabel;
-    private JLabel pageLabel; // "Página 1 de 3"
+    private JLabel pageLabel;
 
     // ── botones acciones ──────────────────────────────────────────────────
     private JButton add;
@@ -70,55 +72,62 @@ public class PersonPanel extends JPanel implements IPersonView, IColleague {
 
         initComponents();
 
-        add(buildNorth(), BorderLayout.NORTH);
+        add(buildNorth(),  BorderLayout.NORTH);
         add(buildCenter(), BorderLayout.CENTER);
-        add(buildSouth(), BorderLayout.SOUTH);
+        add(buildSouth(),  BorderLayout.SOUTH);
 
         bindEvents();
+        applyTableAlignment();
     }
 
     private void initComponents() {
-        title = new JLabel("Gestión de Personas", SwingConstants.CENTER);
-        nameTxt = new JLabel("Nombres:");
+        title       = new JLabel("Gestión de Personas", SwingConstants.CENTER);
+        nameTxt     = new JLabel("Nombres:");
         lastNameTxt = new JLabel("Apellidos:");
-        dateTxt = new JLabel("Fecha nacimiento:");
-        genderTxt = new JLabel("Género:");
+        dateTxt     = new JLabel("Fecha nacimiento:");
+        genderTxt   = new JLabel("Género:");
         statusLabel = new JLabel(" ");
-        pageLabel = new JLabel("Página 1 de 1", SwingConstants.CENTER);
+        pageLabel   = new JLabel("Página 1 de 1", SwingConstants.CENTER);
 
-        name = new JTextField(15);
-        lastName = new JTextField(15);
+        name      = new JTextField(15);
+        lastName  = new JTextField(15);
         birthDate = new JTextField("yyyy-MM-dd", 10);
         genderBox = new JComboBox<>(new DefaultComboBoxModel<>(new String[] { "Masculino", "Femenino" }));
 
-        add = new JButton("Agregar");
+        add    = new JButton("Agregar");
         remove = new JButton("Retirar");
-        list = new JButton("Listar");
+        list   = new JButton("Listar");
         persis = new JButton("Exportar CSV");
-        back = new JButton("← Volver");
+        back   = new JButton("← Volver");
 
         prevBtn = new JButton("◀ Anterior");
         nextBtn = new JButton("Siguiente ▶");
 
         tableModel = new DefaultTableModel(
                 new String[] { "ID", "Nombres", "Apellidos", "Género", "Edad" }, 0) {
-            @Override
-            public boolean isCellEditable(int r, int c) {
-                return false;
-            }
+            @Override public boolean isCellEditable(int r, int c) { return false; }
         };
-        table = new JTable(tableModel);
+        table  = new JTable(tableModel);
         scroll = new JScrollPane(table);
     }
 
-    private JLabel buildNorth() {
-        return title;
+    // Aplica la alineación leída del config a todas las columnas de la tabla
+    private void applyTableAlignment() {
+        int align = AppConfig.getInstance().getTableAlign();
+        DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
+        renderer.setHorizontalAlignment(align);
+
+        for (int i = 0; i < table.getColumnCount(); i++) {
+            table.getColumnModel().getColumn(i).setCellRenderer(renderer);
+        }
     }
+
+    private JLabel buildNorth() { return title; }
 
     private JPanel buildCenter() {
         JPanel center = new JPanel(new BorderLayout(10, 10));
-        center.add(buildForm(), BorderLayout.NORTH);
-        center.add(scroll, BorderLayout.CENTER);
+        center.add(buildForm(),   BorderLayout.NORTH);
+        center.add(scroll,        BorderLayout.CENTER);
         center.add(buildPaging(), BorderLayout.SOUTH);
         return center;
     }
@@ -127,24 +136,19 @@ public class PersonPanel extends JPanel implements IPersonView, IColleague {
         JPanel form = new JPanel(new GridLayout(2, 4, 8, 8));
         form.setBorder(BorderFactory.createTitledBorder("Datos"));
 
-        form.add(nameTxt);
-        form.add(name);
-        form.add(lastNameTxt);
-        form.add(lastName);
-        form.add(genderTxt);
-        form.add(genderBox);
-        form.add(dateTxt);
-        form.add(birthDate);
+        form.add(nameTxt);     form.add(name);
+        form.add(lastNameTxt); form.add(lastName);
+        form.add(genderTxt);   form.add(genderBox);
+        form.add(dateTxt);     form.add(birthDate);
 
         return form;
     }
 
-    // Barra de paginado: [◀ Anterior] Página 1 de 3 [Siguiente ▶]
     private JPanel buildPaging() {
         JPanel paging = new JPanel(new BorderLayout(8, 0));
-        paging.add(prevBtn, BorderLayout.WEST);
+        paging.add(prevBtn,   BorderLayout.WEST);
         paging.add(pageLabel, BorderLayout.CENTER);
-        paging.add(nextBtn, BorderLayout.EAST);
+        paging.add(nextBtn,   BorderLayout.EAST);
         return paging;
     }
 
@@ -158,48 +162,26 @@ public class PersonPanel extends JPanel implements IPersonView, IColleague {
         buttons.add(persis);
         buttons.add(back);
 
-        south.add(buttons, BorderLayout.WEST);
+        south.add(buttons,     BorderLayout.WEST);
         south.add(statusLabel, BorderLayout.CENTER);
         return south;
     }
 
     private void bindEvents() {
-        add.addActionListener(e -> onAdd());
+        add.addActionListener(e    -> onAdd());
         remove.addActionListener(e -> onRemove());
-        list.addActionListener(e -> onList());
+        list.addActionListener(e   -> onList());
         persis.addActionListener(e -> onExport());
-        back.addActionListener(e -> mediator.notify(this, "back"));
+        back.addActionListener(e   -> mediator.notify(this, "back"));
 
-        prevBtn.addActionListener(e -> {
-            if (presenter != null)
-                presenter.prevPage();
-        });
-        nextBtn.addActionListener(e -> {
-            if (presenter != null)
-                presenter.nextPage();
-        });
+        prevBtn.addActionListener(e -> { if (presenter != null) presenter.prevPage(); });
+        nextBtn.addActionListener(e -> { if (presenter != null) presenter.nextPage(); });
     }
 
-    private void onAdd() {
-        if (presenter != null)
-            presenter.addPerson(name.getText(), lastName.getText(), genderBox.getSelectedItem().toString(),
-                    birthDate.getText());
-    }
-
-    private void onRemove() {
-        if (presenter != null)
-            presenter.removePerson();
-    }
-
-    private void onList() {
-        if (presenter != null)
-            presenter.listPersons();
-    }
-
-    private void onExport() {
-        if (presenter != null)
-            presenter.exportCSV();
-    }
+    private void onAdd()    { if (presenter != null) presenter.addPerson(name.getText(), lastName.getText(), genderBox.getSelectedItem().toString(), birthDate.getText()); }
+    private void onRemove() { if (presenter != null) presenter.removePerson(); }
+    private void onList()   { if (presenter != null) presenter.listPersons(); }
+    private void onExport() { if (presenter != null) presenter.exportCSV(); }
 
     // ── IPersonView ────────────────────────────────────────────────────────
 
@@ -216,8 +198,6 @@ public class PersonPanel extends JPanel implements IPersonView, IColleague {
             });
         }
         pageLabel.setText("Página " + currentPage + " de " + totalPages);
-
-        // Habilita/deshabilita los botones según si hay páginas disponibles
         prevBtn.setEnabled(currentPage > 1);
         nextBtn.setEnabled(currentPage < totalPages);
     }
@@ -231,14 +211,8 @@ public class PersonPanel extends JPanel implements IPersonView, IColleague {
 
     // ── ViewInterface ──────────────────────────────────────────────────────
 
-    @Override
-    public void setPresenter(IPersonPresenter presenter) {
-        this.presenter = presenter;
-    }
-
-    @Override
-    public void start() {
-    }
+    @Override public void setPresenter(IPersonPresenter presenter) { this.presenter = presenter; }
+    @Override public void start() {}
 
     @Override
     public void showMessage(String msg) {
@@ -259,8 +233,5 @@ public class PersonPanel extends JPanel implements IPersonView, IColleague {
 
     // ── IColleague ─────────────────────────────────────────────────────────
 
-    @Override
-    public void setMediator(IMediator mediator) {
-        this.mediator = mediator;
-    }
+    @Override public void setMediator(IMediator mediator) { this.mediator = mediator; }
 }
