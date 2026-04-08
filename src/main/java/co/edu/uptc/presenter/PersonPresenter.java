@@ -33,7 +33,7 @@ public class PersonPresenter implements IPersonPresenter {
         this.validator = new PersonValidator(
                 new NameLengthRule("name", config.getPersonNameMin(), config.getPersonNameMax()),
                 new NameLengthRule("lastname", config.getPersonLastNameMin(), config.getPersonLastNameMax()),
-                new DateRule());
+                new DateRule(config.getPersonBirthDateMin()));
 
         this.pageSize = config.getPageSize();
     }

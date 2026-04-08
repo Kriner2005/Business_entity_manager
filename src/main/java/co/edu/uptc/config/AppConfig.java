@@ -1,5 +1,9 @@
 package co.edu.uptc.config;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+
 import javax.swing.SwingConstants;
 
 import co.edu.uptc.interfaces.IFileStorage;
@@ -90,6 +94,16 @@ public class AppConfig {
         return parseInt("person.lastname.max");
     }
 
+    public LocalDate getPersonBirthDateMin() {
+    String raw = require("person.birthdate.min");
+    try {
+        return LocalDate.parse(raw, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+    } catch (DateTimeParseException e) {
+        throw new IllegalStateException(
+            "Valor inválido para 'person.birthdate.min': '" + raw + "'. Formato esperado: yyyy-MM-dd");
+    }
+}
+
     public String getProductDescriptionStyle() {
         String style = requireUpper("product.description.style");
         if (!style.equals("UPPERCASE") && !style.equals("TITLECASE")) {
@@ -112,10 +126,6 @@ public class AppConfig {
         return require(key).toUpperCase();
     }
 
-    /**
-     * Lee una clave y la convierte a int.
-     * Lanza excepción si la clave no existe o no es un número válido.
-     */
     private int parseInt(String key) {
         String raw = require(key);
         try {

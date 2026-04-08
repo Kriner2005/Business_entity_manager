@@ -21,6 +21,8 @@ public class BussinesManager implements ModelInterface {
     private final IStructureCollection<IContainer<Product>, Product> productBehaviour;
 
     private final List<Accounting> accountingContainer;
+    
+
 
     private final IFileStorage<Person> personStorage;
     private final IFileStorage<Product> productStorage;
@@ -119,7 +121,7 @@ public class BussinesManager implements ModelInterface {
 
     @Override
     public void addAccounting(Accounting accounting) {
-        
+
         accountingContainer.add(accounting);
         accountingStorage.append(accounting);
     }

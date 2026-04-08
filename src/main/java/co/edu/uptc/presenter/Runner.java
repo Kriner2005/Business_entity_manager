@@ -5,7 +5,6 @@ import co.edu.uptc.interfaces.ModelInterface;
 import co.edu.uptc.model.BussinesManager;
 import co.edu.uptc.model.DoubleLinkedList;
 import co.edu.uptc.model.collectionsByBehaviour.Queue;
-import co.edu.uptc.model.collectionsByBehaviour.Stack;
 import co.edu.uptc.view.MainFrame;
 import co.edu.uptc.view.interfaces.IAppView;
 
@@ -20,7 +19,7 @@ public class Runner {
 
         model = new BussinesManager(
                 new DoubleLinkedList<>(), new Queue<>(),
-                new DoubleLinkedList<>(), new Stack<>(),
+                new DoubleLinkedList<>(), new Queue<>(),
                 config.getPersonStorage(),
                 config.getProductStorage(),
                 config.getAccountingStorage());

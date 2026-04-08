@@ -6,12 +6,18 @@ import java.time.LocalDate;
 
 public class DateRule {
 
+    private final LocalDate minDate;
+
+    public DateRule(LocalDate minDate) {
+        this.minDate = minDate;
+    }
+
     public ValidationResult validate(LocalDate date) {
         if (date == null)
             return ValidationResult.fail(MessageManager.msg("validation.date.null"));
         if (date.isAfter(LocalDate.now()))
             return ValidationResult.fail(MessageManager.msg("validation.date.future"));
-        if (date.isBefore(LocalDate.now().minusYears(120)))
+        if (date.isBefore(minDate))
             return ValidationResult.fail(MessageManager.msg("validation.date.invalid"));
         return ValidationResult.ok();
     }
